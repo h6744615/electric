@@ -2,6 +2,6 @@
   
 namespace \Windward\Extend;
 
-class Validator extends Base {
+class Validator extends \Windward\Core\Base {
     
 }

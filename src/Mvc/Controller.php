@@ -1,6 +1,6 @@
 <?php
 namespace \Windward\Mvc;
 
-Class Controller extends Base {
+Class Controller extends \Windward\Core\Base {
     
 }

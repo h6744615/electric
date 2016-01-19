@@ -2,6 +2,6 @@
 
 namespace \Windward\Extend;
 
-class Uploader extends Base {
+class Uploader extends \Windward\Core\Base {
     
 }

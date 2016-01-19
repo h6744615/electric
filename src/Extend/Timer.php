@@ -2,6 +2,6 @@
 
 namespace \Windward\Extend;
 
-class Timer extends Base {
+class Timer extends \Windward\Core\Base {
     
 }

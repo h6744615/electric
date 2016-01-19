@@ -1,6 +1,6 @@
 <?php
 namespace \Windward\Mvc;
 
-Class View Extends Base {
+Class View Extends \Windward\Core\Base {
     
 }

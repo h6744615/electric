@@ -2,7 +2,7 @@
 
 namespace \Windward\Extend;
 
-class Session extends Base {
+class Session extends \Windward\Core\Base {
     
     function init() {
         

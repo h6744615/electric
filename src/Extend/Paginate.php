@@ -2,6 +2,6 @@
 
 namespace \Windward\Extend;
 
-class Paginate extends Base {
+class Paginate extends \Windward\Core\Base {
     
 }

@@ -2,6 +2,6 @@
 
 namespace \Windward\Extend;
 
-class System extends Base {
+class System extends \Windward\Core\Base {
     
 }
