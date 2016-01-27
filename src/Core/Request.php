@@ -1,15 +1,49 @@
 <?php
-
 namespace Windward\Core;
 
-class Request extends Base {
+use Windward\Extend\Util;
+
+class Request  {
     
-    public function getQuery() {
-        
+    private $post;
+    private $normalizedUri;
+
+    public static function build(Container $container)
+    {
+        $request = new Request($container);
+        $request->init();
+        return $request;
+    }
+
+    public function init()
+    {
+        if ($this->isPost()) {
+            if (strtolower($_SERVER['CONTENT_TYPE']) == 'application/json') {
+                $this->post = json_decode(file_get_contents('php://input'), true);
+            } else {
+                $this->post = $_POST;
+            }
+        }
+    }
+
+    public function getQuery($name = null, $default = null) {
+        if (is_null($name)) {
+            return $_GET;
+        }
+        if (Util::issetArrayValue($_GET, $name)) {
+            return Util::getArrayValue($this->post, $name);
+        }
+        return $default;
     }
     
-    public function getPost() {
-        
+    public function getPost($name, $default = null) {
+        if (is_null($name)) {
+            return $this->post;
+        }
+        if (Util::issetArrayValue($this->post, $name)) {
+            return Util::getArrayValue($this->post, $name);
+        }
+        return $default;
     }
     
     public function getFile() {
@@ -28,14 +62,24 @@ class Request extends Base {
         
     }
     
-    public function isQuery() {
-        
+    public function isGet() {
+        return $_SERVER['REQUEST_METHOD'] == 'GET';
     }
     
     public function isPost() {
-        
+        return $_SERVER['REQUEST_METHOD'] == 'POST';
     }
     
+    public function getNormalizedUri()
+    {
+        return $this->normalizedUri;
+    }
+
+    public function setNormalizedUri($uri)
+    {
+        $this->normalizedUri = $uri;
+    }
+
     public function hasFile() {
         
     }
@@ -43,8 +87,5 @@ class Request extends Base {
     public function hasCookie() {
     
     }
-    
-    public function redirect() {
-        
-    }
+
 }

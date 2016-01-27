@@ -1,55 +1,54 @@
 <?php
+
 namespace Windward\Extend;
 
-class Database extends \Windward\Core\Base {
+class Database extends \medoo {
 
-    private $pdo;
-    private $identifierQuoter = '';
-
-    private $options = array(
-        'host' => '',
-        'port' => '',
-        'dbname' => '',
-        'unix_socket' => '',
-        'charset' => '',
-    );
-
-    public function __construct(array $options)
-    {
-        foreach ($this->options as $key => $value) {
-            if (isset($options[$key])) {
-                $this->options[$key] = $options[$key];
-            } else {
-                unset($this->options);
+    public function paginate($table, $column = '*', $where = null, $join = null, $curr = 1, $pagesize = 20) {
+        if (is_numeric($where)) {
+            $curr = $where;
+            $where = NULL;
+            if (is_numeric($join)) {
+                $pagesize = $join;
             }
-        }   
-        $type = strtolower($options['type']);
-        switch ($type) {
-            case 'mariadb':
-            case 'mysql':
-                $dsn = 'mysql:' . join(';', $this->options);
-                $this->identifierQuoter = '`';
-                break;
-            default:
-                # code...
-                break;
+            $join = NULL;
         }
-        $this->pdo = new \Pdo($dsn, $options['username'], $options['password']);
+        if (is_numeric($join)) {
+            $pagesize = $curr;
+            $curr = $join;
+            $join = NULL;
+        }
+        if(is_null($where)) {
+            $count = $this->count($table, '*');
+        } else {
+            $count = $this->count($table, $join, '*', $where);
+        }
+        
+        if ($count == 0) {
+            return array(
+                'total_page' => 0,
+                'total_items' => 0,
+                'items' => array(),
+            );
+        }
+        if ($pagesize == 0) {
+            $pagesize = 0;
+        }
+        $totalPage = ceil($count / $pagesize * 1.0);
+        $from = ($curr - 1) * $pagesize;
+        $where['LIMIT'] = array($from, $pagesize);
+        
+        if(is_null($join)) {
+            $items = $this->select($table, $column, $where);
+
+        } else {
+            $items = $this->select($table, $join, $column, $where);
+        }
+        return array(
+            'total_page' => $totalPage,
+            'total_items' => $count + 0,
+            'items' => $items,
+        );
     }
 
-    public function quoteIdentifier($identifier)
-    {   
-        if ($identifier === '*') {
-            return $identifier;
-        }
-        if (is_array($identifier)) {
-            return join(', ', array_map(array($this, 'quoteIdentifier'), $identifier));
-        } 
-        if(strpos($identifier, '.') !== false) {
-            return join('.', array_map(array($this, 'quoteIdentifier'), explode('.', $identifier)));
-        }
-        return $this->identifierQuoter 
-                . str_replace($this->identifierQuoter, $this->identifierQuoter . $this->identifierQuoter, $identifier)
-                . $this->identifierQuoter ;
-    }
 }

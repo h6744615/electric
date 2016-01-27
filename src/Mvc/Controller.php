@@ -13,5 +13,8 @@ Class Controller extends \Windward\Core\Base {
         $this->container = $container;   
     }
 
-
+    public function error404Action()
+    {
+        $this->view->display('404');
+    }
 }

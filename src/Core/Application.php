@@ -1,30 +1,17 @@
 <?php
 
 /**
-*  基类
-*  @author Windward
-*/
+ * 应用类
+ */
 namespace Windward\Core;
 
 class Application extends Base {
     
-    private $container = null;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
-
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-    }
-
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
+    /**
+     * 处理uri
+     * 
+     * @param string $uri
+     */
     public function handle($uri = null)
     {
         if (is_null($uri)) {

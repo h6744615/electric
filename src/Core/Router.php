@@ -1,6 +1,7 @@
 <?php
-  
 namespace Windward\Core;
+
+use Windward\Extend\Text;
 
 class Router extends Base {
     
@@ -13,11 +14,9 @@ class Router extends Base {
     private $defaultController = 'index';
     private $defaultAction = 'index';
 
-    private $container;
-
     public function __construct(Container $container)
     {
-        $this->container = $container;
+        parent::__construct($container);
         $route = new Route('/:controller/:action/:param_pairs');
         $this->routes[] = $route;
     }
@@ -52,14 +51,23 @@ class Router extends Base {
         }
         if (is_null($this->activeRoute)) {
             $controllerName = $this->defaultController;
-            $actionName = $this->defaultAction . $this->actionSuffix;
+            $actionName = $this->defaultAction;
         } else {
-            $controllerName = $this->activeRoute->getControllerName();
-            $actionName = $this->activeRoute->getActionName() . $this->actionSuffix;
+            $controllerName = ucfirst(Text::camelCase($this->activeRoute->getControllerName()));
+            $actionName = lcfirst(Text::camelCase($this->activeRoute->getActionName()));
         }
+        
+        $request = Request::build($this->container);
+        $request->setNormalizedUri($controllerName . '/' . $actionName);
+        $this->container->request = $request;
+
         $controller = $this->container->controller($controllerName);
-        $response = call_user_func(array($controller, $actionName));
-        return $response;
+        $actionName .= $this->actionSuffix;
+        if (is_callable(array($controller, $actionName))) {
+            $response = call_user_func(array($controller, $actionName));
+            return $response->output();
+        }
+        return call_user_func(array($controller, 'error404' . $this->actionSuffix));
     }
 
     public function getParams()
