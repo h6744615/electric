@@ -54,7 +54,7 @@ class Container {
      * @return \Windward\Core\Controller
      */
     public function controller($name) {
-        $name = $this->controllerNamespace . '\\' . $name;
+        $name = $this->controllerNamespace . '\\' . ucfirst($name);
         if (isset($this->items[$name])) {
             return $this->items[$name];
         }

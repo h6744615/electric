@@ -34,7 +34,7 @@ class Route extends Base {
             '(.*)', 
             '(.*)'
         ), $pattern);
-        $this->pattern = '~^' . $pattern . '~';
+        $this->pattern = '~^' . $pattern . '$~';
         $this->handler = $handler;
     }
 

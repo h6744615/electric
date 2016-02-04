@@ -17,6 +17,8 @@ class Router extends Base {
     private $defaultController = 'index';
     private $defaultAction = 'index';
 
+    private $notFoundHandler = null;
+
     public function __construct(Container $container)
     {
         parent::__construct($container);
@@ -104,8 +106,7 @@ class Router extends Base {
             $response = call_user_func(array($controller, $actionName));
             return $response->output();
         }
-        $controller = new Controller($this->container);
-        return call_user_func(array($controller, 'error404' . $this->actionSuffix));
+        return call_user_func($this->getNotfoundHandler());
     }
 
     public function getParams()
@@ -114,5 +115,23 @@ class Router extends Base {
             return null;
         }
         return $this->activeRoute->getParams();
+    }
+
+    public function getNotFoundHandler()
+    {   
+        if ($this->notFoundHandler) {
+            return $this->notFoundHandler;
+        }
+        $controller = new Controller($this->container);
+        return array($controller, 'error404' . $this->actionSuffix);
+    }
+
+    public function setNotFoundHandler(array $handler)
+    {   
+        $controller = $this->container->controller($handler[0]);
+        $actionName = $handler[1] . $this->actionSuffix;
+        if ($controller && $actionName && is_callable(array($controller, $actionName))) {
+            $this->notFoundHandler = array($controller, $actionName);
+        }
     }
 }
