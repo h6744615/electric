@@ -40,30 +40,35 @@ class Route extends Base {
 
     public function test($uri)
     {
-        $count = preg_match($this->pattern, $uri, $m);
+        $pattern = str_replace('/', '//', $this->pattern);
+        $regexp = preg_replace_callback('#(?:\[([\w]+):([^]]+)\])|(?::(\w+))#', function($m) {
+            if ($m[1]) {
+                return '(?P<'. preg_quote($m[1]) . '>' . $m[2] . ')';
+            }
+            return '(?P<'. preg_quote($m[3]) . '>[^/]*)';
+        }, $pattern);
+        $regexp = str_replace('//', '/', $regexp);
+        $count = preg_match($regexp, $uri, $m);
         if ($count == 0) {
             return false;
         }
-        $c = count($m) - 1;
-        if ($c > 1 && is_null($this->handler)) {
-            $this->controllerName = $m[1];
-        } elseif($this->handler) {
+        if ($this->handler) {
             $this->controllerName = $this->handler[0];
-        }
-        if ($c > 2 && is_null($this->handler)) {
-            $this->actionName = $m[2];
-        } elseif(count($this->handler) > 1) {
-            $this->controllerName = $this->handler[1];
-        }
-        if ($this->hasParams) {                
-            $paramParts = preg_split('#/#', $m[$c], 0, PREG_SPLIT_NO_EMPTY);
-            if ($this->paramsPaired) {
-                $c = count($paramParts);
-                for ($i = 0; $i < $c - 1 ; $i += 2) {
-                    $this->params[$paramParts[$i]] = $paramParts[$i+1];
+            $this->actionName = $this->handler[1];
+            $this->params = $m;
+        } else {
+            array_shift($m);
+            $this->controllerName = array_shift($m);
+            $this->actionName = array_shift($m);
+            if ($this->hasParams && $this->paramsPaired) {
+                $parts = explode('/', $m[0]);
+                $count = count($parts);
+                if ($count % 2 != 1) {
+                    return false;
                 }
-            } else {
-                $this->params = $paramParts;
+                for ($i = 1; $i < $count - 1; $i += 2) {
+                    $this->params[$parts[$i]] = $parts[$i + 1];
+                }
             }
         }
         return true;

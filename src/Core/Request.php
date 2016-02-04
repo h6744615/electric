@@ -1,22 +1,21 @@
 <?php
+
 namespace Windward\Core;
 
 use Windward\Extend\Util;
 
-class Request  {
-    
+class Request {
+
     private $post;
     private $normalizedUri;
 
-    public static function build(Container $container)
-    {
+    public static function build(Container $container) {
         $request = new Request($container);
         $request->init();
         return $request;
     }
 
-    public function init()
-    {
+    public function init() {
         if ($this->isPost()) {
             if (strtolower($_SERVER['CONTENT_TYPE']) == 'application/json') {
                 $this->post = json_decode(file_get_contents('php://input'), true);
@@ -31,11 +30,11 @@ class Request  {
             return $_GET;
         }
         if (Util::issetArrayValue($_GET, $name)) {
-            return Util::getArrayValue($this->post, $name);
+            return Util::getArrayValue($_GET, $name);
         }
         return $default;
     }
-    
+
     public function getPost($name, $default = null) {
         if (is_null($name)) {
             return $this->post;
@@ -45,47 +44,61 @@ class Request  {
         }
         return $default;
     }
-    
+
     public function getFile() {
         
     }
-    
+
     public function getCookie() {
         
     }
-    
+
     public function setCookie() {
         
     }
-    
-    public function getServer() {
-        
+
+    public function getServer($key) {
+        return filter_input(INPUT_SERVER, $key, FILTER_SANITIZE_STRING);
     }
-    
+
     public function isGet() {
-        return $_SERVER['REQUEST_METHOD'] == 'GET';
+        return $this->getServer('REQUEST_METHOD') == 'GET';
     }
-    
+
     public function isPost() {
-        return $_SERVER['REQUEST_METHOD'] == 'POST';
+        return $this->getServer('REQUEST_METHOD') == 'POST';
     }
-    
-    public function getNormalizedUri()
-    {
+
+    public function getNormalizedUri() {
         return $this->normalizedUri;
     }
 
-    public function setNormalizedUri($uri)
-    {
+    public function setNormalizedUri($uri) {
         $this->normalizedUri = $uri;
     }
 
     public function hasFile() {
         
     }
-    
+
     public function hasCookie() {
-    
+        
     }
 
+    public function getMethod()
+    {
+        switch ($this->getServer('REQUEST_METHOD')) {
+            case 'GET':
+                return Http::METHOD_GET;
+                break;
+
+            case 'POST':
+                return Http::METHOD_POST;
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+    }
 }

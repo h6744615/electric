@@ -2,7 +2,7 @@
 
 namespace Windward\Core;
 
-class logger extends Base {
+class Logger extends Base {
     
     private $type = 'default';
     

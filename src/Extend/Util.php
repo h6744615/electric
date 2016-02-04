@@ -60,11 +60,14 @@ class Util extends \Windward\Core\Base {
     public static function issetArrayValue(array $data, $key) {
         $ptr = $data;
         foreach (explode('.', $key) as $part) {
+            if (!isset($ptr[$part])) {
+                return FALSE;
+            }
             $ptr = $ptr[$part];
         }
         return isset($ptr);
     }
-    
+
     /**
      * 获得数组中指定的值
      * 
@@ -79,7 +82,7 @@ class Util extends \Windward\Core\Base {
         }
         return $ptr;
     }
-    
+
     /**
      * 设置数组中指定的值
      * 

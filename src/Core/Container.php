@@ -58,6 +58,9 @@ class Container {
         if (isset($this->items[$name])) {
             return $this->items[$name];
         }
+        if (!class_exists($name)) {
+            return null;
+        }
         $controller = new $name($this);
         $this->items[$name] = $controller;
         return $controller;
@@ -73,6 +76,9 @@ class Container {
         $name = $this->modelNamespace . '\\' . $name;
         if (isset($this->items[$name])) {
             return $this->items[$name];
+        }
+        if (!class_exists($name)) {
+            return null;
         }
         $model = new $name($this);
         $model->setDbConnection($this->database);

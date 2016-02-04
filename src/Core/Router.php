@@ -2,6 +2,7 @@
 namespace Windward\Core;
 
 use Windward\Extend\Text;
+use Windward\Mvc\Controller;
 
 class Router extends Base {
     
@@ -9,6 +10,8 @@ class Router extends Base {
     private $actionSuffix = 'Action';
 
     private $routes = array();
+    private $namedRoutes = array();
+
     private $activeRoute = null;
 
     private $defaultController = 'index';
@@ -17,8 +20,30 @@ class Router extends Base {
     public function __construct(Container $container)
     {
         parent::__construct($container);
-        $route = new Route('/:controller/:action/:param_pairs');
-        $this->routes[] = $route;
+    }
+
+    public function addRoute($method, $pattern, $handler = null, $name = '')
+    {
+        $methods = array();
+        switch ($method) {
+            case Http::METHOD_ANY:
+                $methods = array(
+                    Http::METHOD_GET,
+                    Http::METHOD_POST,
+                );
+                break;
+            default:
+                $methods[] = $method;
+                break;
+        }
+        if ($name) {
+            $this->namedRoutes[$name] = $pattern;
+        }
+        $route = new Route($pattern, $handler);
+        foreach ($methods as $method) {
+            $this->routes[$method][$pattern] = $route;
+        }
+        return $route;
     }
 
     public function setControllerSuffix($suffix)
@@ -43,7 +68,18 @@ class Router extends Base {
 
     public function handle($uri)
     {
-        foreach ($this->routes as $route) {
+        $this->addRoute(Http::METHOD_ANY, '/:controller/:action/:param_pairs');
+        $request = Request::build($this->container);
+        $method = $request->getMethod();
+        $controllerName = $this->defaultController;
+        $actionName = $this->defaultAction;
+
+        if (!isset($this->routes[$method])) {
+            goto end_loop;
+        }
+        $activeRoutes = $this->routes[$method];
+
+        foreach ($activeRoutes as $route) {
             if ($route->test($uri)) {
                 $this->activeRoute = $route;
                 break;
@@ -57,16 +93,18 @@ class Router extends Base {
             $actionName = lcfirst(Text::camelCase($this->activeRoute->getActionName()));
         }
         
-        $request = Request::build($this->container);
         $request->setNormalizedUri($controllerName . '/' . $actionName);
         $this->container->request = $request;
 
         $controller = $this->container->controller($controllerName);
         $actionName .= $this->actionSuffix;
-        if (is_callable(array($controller, $actionName))) {
+
+        end_loop:
+        if (isset($controller) && $actionName && is_callable(array($controller, $actionName))) {
             $response = call_user_func(array($controller, $actionName));
             return $response->output();
         }
+        $controller = new Controller($this->container);
         return call_user_func(array($controller, 'error404' . $this->actionSuffix));
     }
 
