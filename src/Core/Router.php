@@ -104,7 +104,9 @@ class Router extends Base {
         end_loop:
         if (isset($controller) && $actionName && is_callable(array($controller, $actionName))) {
             $response = call_user_func(array($controller, $actionName));
-            return $response->output();
+            if (is_a($response, 'Windward\Core\Response')) {
+                return $response->output();
+            }
         }
         return call_user_func($this->getNotfoundHandler());
     }

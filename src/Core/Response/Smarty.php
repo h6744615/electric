@@ -9,7 +9,7 @@ namespace Windward\Core\Response;
 use Windward\Core\Base;
 use Windward\Core\Container;
 
-class Smarty extends Base {
+class Smarty extends \Windward\Core\Response {
 
     private $view;
 
