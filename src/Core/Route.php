@@ -84,8 +84,11 @@ class Route extends Base {
         return $this->actionName;
     }
 
-    public function getParams()
+    public function getParams($key = null)
     {
-        return $this->params;
+        if (is_null($key)) {
+            return $this->params;
+        }
+        return $this->params[$key];
     }
 }

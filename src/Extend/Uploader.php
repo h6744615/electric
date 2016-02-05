@@ -2,6 +2,8 @@
 
 namespace Windward\Extend;
 
+use \Intervention\Image\ImageManagerStatic;
+
 class Uploader extends \Windward\Core\Base {
     
     private $rules;
@@ -9,6 +11,7 @@ class Uploader extends \Windward\Core\Base {
     private $processOnOneError = true;
     private $hasError = false;
     private $basePath;
+    private $presets = array();
 
     public function setBasePath($path)
     {
@@ -83,9 +86,13 @@ class Uploader extends \Windward\Core\Base {
         if (!file_exists($destFileName)) {
             $file['error'] .= 'move error';
         }
-        if (isset($rules['thumbs']])) {
+        if (isset($rules['thumbs'])) {
             $this->generateThubms($destFileName, $rules['thumbs']);
         }
+        $file['dest'] = array(
+            'path' => $savePath,
+            'name' => $destFileName,
+        );
     }
 
     public function generateThubms($file, $thumbs)
@@ -98,9 +105,33 @@ class Uploader extends \Windward\Core\Base {
         }
     }
 
-    public function generateThubm($file, $thumb)
+    public function generateThubm($file, $thumb, $name = null, $output = false)
     {
-        
+        $pathInfo = pathinfo($file);
+        $thumbName = $file . '_';
+        if (is_null($name)) {
+            if (!isset($thumb['w'])) {
+                $thumb['w'] = null;
+            } else {
+                $thumbName .= 'w' . $thumb['w'];
+            }
+            if (!isset($thumb['h'])) {
+                $thumb['h'] = null;
+            } else {
+                $thumbName .= 'h' . $thumb['h'];
+            }
+        } else {
+            $thumbName .= $name;
+        }
+        $img = ImageManagerStatic::make($file);
+        $img->resize($thumb['w'], $thumb['h'], function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($thumbName . '.' . $pathInfo['extension']);
+        if ($output) {
+            // send HTTP header and output image data
+            header('Content-Type: image/png');
+            exit($img->encode($pathInfo['extension']));
+        }
     }
 
     public function getDestName($name)
@@ -149,5 +180,47 @@ class Uploader extends \Windward\Core\Base {
         }
         $file['error'] = join("\n", $errors);
         return true;
+    }
+
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    public function outImage($file)
+    {
+        $flg = true;
+        $thumb = array();
+        $name = null;
+        if ($this->presets) {
+            $patterns = array();
+            foreach (array_keys($this->presets) as $key) {
+                $patterns[] = preg_quote($key);
+            }
+            $pattern = '~(' . join('|', $patterns) . ')~';
+            preg_match($pattern, $file, $m);
+            if (preg_match($pattern, $file, $m) && isset($this->presets[$m[1]])) {
+                $flg = false;
+                $thumb = $this->presets[$m[1]];
+                $name = $m[1];
+                $file = preg_replace('~_(' . join('|', $patterns) . ').(png|jpg|jpeg)~', '', $this->basePath . $file);
+            }
+        }
+        if ($flg) {
+            if (($count = preg_match_all('#([w|h])(\d+)#i', $file, $m)) == 0) {
+                return false;
+            }
+            for ($i = 0; $i < $count; $i++) {
+                $thumb[$m[1][$i]] = $m[2][$i];
+            }
+            $file = preg_replace('#_(?:([w|h]\d+){1,2}.(png|jpg|jpeg))#i', '', $this->basePath . $file);
+        }
+        $this->generateThubm($file, $thumb, $name, true);   
+    }
+
+
+    public function setPresets(array $presets)
+    {
+        $this->presets = $presets;
     }
 }

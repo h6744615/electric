@@ -69,7 +69,7 @@ class Router extends Base {
     }
 
     public function handle($uri)
-    {
+    {        
         $this->addRoute(Http::METHOD_ANY, '/:controller/:action/:param_pairs');
         $request = Request::build($this->container);
         $method = $request->getMethod();
@@ -111,12 +111,12 @@ class Router extends Base {
         return call_user_func($this->getNotfoundHandler());
     }
 
-    public function getParams()
+    public function getParams($key = null)
     {
         if (is_null($this->activeRoute)) {
             return null;
         }
-        return $this->activeRoute->getParams();
+        return $this->activeRoute->getParams($key);
     }
 
     public function getNotFoundHandler()
