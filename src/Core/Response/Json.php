@@ -8,7 +8,7 @@ namespace Windward\Core\Response;
 use Windward\Core\Base;
 use Windward\Core\Container;
 
-class Json extends Base {
+class Json extends \Windward\Core\Response {
     
     private $payload = array();
     
@@ -20,7 +20,6 @@ class Json extends Base {
     public function __construct(Container $container)
     {
         parent::__construct($container);
-        $this->view = $this->container->view;
     }
     
     /**
@@ -32,6 +31,18 @@ class Json extends Base {
     public function set($name, $value)
     {
         $this->payload[$name] = $value;
+        return $this;
+    }
+    
+    /**
+     * 整体赋值
+     * 
+     * @param string $payload 值
+     */
+    public function setPayload($payload)
+    {
+        $this->payload = $payload;
+        return $this;
     }
     
     /**

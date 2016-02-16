@@ -31,6 +31,7 @@ class Smarty extends \Windward\Core\Response {
      */
     public function set($name, $value) {
         $this->view->assign($name, $value);
+        return $this;
     }
 
     /**
