@@ -35,7 +35,7 @@ class Request {
         return $default;
     }
 
-    public function getPost($name, $default = null) {
+    public function getPost($name = null, $default = null) {
         if (is_null($name)) {
             return $this->post;
         }

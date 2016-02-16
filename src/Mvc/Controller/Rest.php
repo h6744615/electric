@@ -21,13 +21,13 @@ Class Rest extends \Windward\Mvc\Controller {
         return $response->setPayload($result);
     }
 
-    public function success($data, $msg = '')
+    public function success($data = null, $msg = '')
     {
         $result = array(
             'status' => 'OK',
             'code' => 0,
             'msg' => $msg,
-            'data' => $data,
+            'data' => $data ? $data : new \stdClass(),
             'need_login' => 0,
         );
         $response = new JsonResponse($this->container);
