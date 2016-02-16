@@ -103,7 +103,13 @@ class Router extends Base {
 
         end_loop:
         if (isset($controller) && $actionName && is_callable(array($controller, $actionName))) {
+            if (is_callable(array($controller, 'beforeHandle'))) {
+                call_user_func(array($controller, 'beforeHandle'));
+            }
             $response = call_user_func(array($controller, $actionName));
+            if (is_callable(array($controller, 'afterHandle'))) {
+                call_user_func(array($controller, 'afterHandle'));
+            }
             if (is_a($response, 'Windward\Core\Response')) {
                 return $response->output();
             }
@@ -135,5 +141,10 @@ class Router extends Base {
         if ($controller && $actionName && is_callable(array($controller, $actionName))) {
             $this->notFoundHandler = array($controller, $actionName);
         }
+    }
+
+    public function getActiveRoute()
+    {
+        return $this->activeRoute;
     }
 }
