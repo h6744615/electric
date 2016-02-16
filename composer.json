@@ -10,7 +10,7 @@
         "ext-redis": "*",
         "psr/log": "1.*",
         "smarty/smarty": "~3.1",
-        "catfan/Medoo": "^1.0",
+        "catfan/Medoo": "dev-master",
         "intervention/image": "2.*"
     },
     "require-dev": {
