@@ -74,6 +74,44 @@ Class Model extends \Windward\Core\Base {
         return array();
     }
 
+    public function get($table = '', $fields = '*', $cond = array()) {
+        $sql = "select {$fields} from {$table} where 1 = 1";
+
+        $params = array();
+        foreach ($cond as $key => $val) {
+            if (preg_match('/^\[eq\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= " and {$key} = " . $val;
+                continue;
+            }
+            if (preg_match('/^\[neq\]/', $key)) {
+                $key = substr($key, 5);
+                $sql .= " and {$key} != " . $val;
+                continue;
+            }
+            if (preg_match('/^\[in\]/', $key)) {
+                $key = substr($key, 4);
+                if (is_array($val)) {
+                    $val = implode(',', $val);
+                } else {
+                    $val = (string) $val;
+                }
+                $sql .= " and {$key} in (" . $val . ")";
+                continue;
+            }
+            //other todo
+
+            $sql .= " and $key = :cond_{$key}";
+            $params[":cond_{$key}"] = $val;
+        }
+
+        $stmt = $this->query($sql, $params);
+        if ($stmt) {
+            return $stmt->fetch();
+        }
+        return array();
+    }
+
     public function update($table = '', $data = array(), $cond = array()) {
         if (!$table || !$data) {
             return false;
@@ -82,8 +120,9 @@ Class Model extends \Windward\Core\Base {
         $vals = array();
         $sql = "update {$table} set ";
         foreach ($data as $key => $val) {
-            if (preg_match('/^func:/', $val)) {
-                $sql .= "{$key} = " . substr($val, 5) . ",";
+            if (preg_match('/^\[eq\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= "{$key} = " . $val . ",";
                 continue;
             }
 
@@ -93,10 +132,27 @@ Class Model extends \Windward\Core\Base {
         $sql = rtrim($sql, ',');
         $sql .= ' where 1 = 1';
         foreach ($cond as $key => $val) {
-            if (preg_match('/^func:/', $val)) {
-                $sql .= " and {$key} = " . substr($val, 5);
+            if (preg_match('/^\[eq\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= " and {$key} = " . $val;
                 continue;
             }
+            if (preg_match('/^\[neq\]/', $key)) {
+                $key = substr($key, 5);
+                $sql .= " and {$key} != " . $val;
+                continue;
+            }
+            if (preg_match('/^\[in\]/', $key)) {
+                $key = substr($key, 4);
+                if (is_array($val)) {
+                    $val = implode(',', $val);
+                } else {
+                    $val = (string) $val;
+                }
+                $sql .= " and {$key} in (" . $val . ")";
+                continue;
+            }
+            //other todo
 
             $sql .= " and $key = :cond_{$key}";
             $vals[":cond_{$key}"] = $val;
@@ -123,8 +179,9 @@ Class Model extends \Windward\Core\Base {
         }
 
         foreach ($data as $key => $val) {
-            if (preg_match('/^func:/', $val)) {
-                $sql .= "{$key} = " . substr($val, 5) . ",";
+            if (preg_match('/^\[eq\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= "{$key} = " . $val . ",";
                 continue;
             }
 
@@ -150,8 +207,9 @@ Class Model extends \Windward\Core\Base {
         $sql = "replace into {$table} set ";
 
         foreach ($data as $key => $val) {
-            if (preg_match('/^func:/', $val)) {
-                $sql .= "{$key} = " . substr($val, 5) . ",";
+            if (preg_match('/^\[eq\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= "{$key} = " . $val . ",";
                 continue;
             }
 
