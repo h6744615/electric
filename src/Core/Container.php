@@ -81,7 +81,7 @@ class Container {
             return null;
         }
         $model = new $name($this);
-        $model->setDbConnection($this->database);
+        //$model->setDbConnection($this->database);
         $model->setPdo($this->connection);
         
         $this->items[$name] = $model;

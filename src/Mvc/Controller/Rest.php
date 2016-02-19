@@ -61,5 +61,17 @@ Class Rest extends \Windward\Mvc\Controller {
 
         return $header;
     }
+    
+    public function error404Action() {
+        $json = new \Windward\Core\Response\Json($this->container);
+        $json->setPayload(array(
+            'status' => 'NG',
+            'code' => '404',
+            'msg' => 'Not Found',
+            'data' => new \stdClass,
+            'need_login' => 0,
+        ));
+        $json->output();
+    }
 
 }

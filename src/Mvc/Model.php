@@ -107,15 +107,15 @@ Class Model extends \Windward\Core\Base {
     }
     
     /*
-     * 获取单条数据
+     * 获取单表的单条/多条数据 todo
      */
-    public function get($table = '', $fields = '*', $cond = array()) {
+    public function get($table = '', $fields = '*', $cond = array(),$single = true) {
         $sql = "select {$fields} from {$table} where 1 = 1";
 
         $params = $this->cond($sql, $cond);
         $stmt = $this->query($sql, $params);
         if ($stmt) {
-            return $stmt->fetch();
+            return $single ? $stmt->fetch() : $stmt->fetchAll();
         }
         return array();
     }
