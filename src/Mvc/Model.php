@@ -74,9 +74,7 @@ Class Model extends \Windward\Core\Base {
         return array();
     }
 
-    public function get($table = '', $fields = '*', $cond = array()) {
-        $sql = "select {$fields} from {$table} where 1 = 1";
-
+    public function cond(&$sql,$cond = array()) {
         $params = array();
         foreach ($cond as $key => $val) {
             if (preg_match('/^\[eq\]/', $key)) {
@@ -104,12 +102,32 @@ Class Model extends \Windward\Core\Base {
             $sql .= " and $key = :cond_{$key}";
             $params[":cond_{$key}"] = $val;
         }
+        
+        return $params;
+    }
+    
+    /*
+     * 获取单条数据
+     */
+    public function get($table = '', $fields = '*', $cond = array()) {
+        $sql = "select {$fields} from {$table} where 1 = 1";
 
+        $params = $this->cond($sql, $cond);
         $stmt = $this->query($sql, $params);
         if ($stmt) {
             return $stmt->fetch();
         }
         return array();
+    }
+    
+    public function count($table = '',$cond = array()) {
+        $sql = "select count(*) as cnt from {$table} where 1 = 1";
+        $params = $this->cond($sql,$cond);
+        $stmt = $this->query($sql, $params);
+        if ($stmt) {
+            return $stmt->fetch()['cnt'];
+        }
+        return 0;
     }
 
     public function update($table = '', $data = array(), $cond = array()) {
@@ -252,6 +270,35 @@ Class Model extends \Windward\Core\Base {
         }
 
         return true;
+    }
+    
+    public function paginate($sql,$curpage = 1,$limit = 20) {
+        $selectSql = preg_replace('/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i', '${1}', $sql);
+        $countSql = preg_replace('/select\s*.*?from\s*(.*)/', 'select count(*) as cnt from ${1}', $selectSql);
+        if ($curpage < 1) {
+            $curpage = 1;
+        }
+        $offset = ($curpage - 1) * $limit;
+        $selectSql .= " limit {$offset},{$limit}";
+        
+        $items = $this->fetchAll($selectSql);
+        $totalItems = $this->fetchOne($countSql)['cnt'];
+        if (!$totalItems) {
+            return array(
+                'total_page' => 0,
+                'current_page' => 0,
+                'total_items' => 0,
+                'items' => array(),
+            );
+        }
+        
+        $totalPage = ceil($totalItems / $limit);
+        return array(
+            'total_page' => $totalPage,
+            'current_page' => $curpage,
+            'total_items' => $totalItems,
+            'items' => $items,
+        );
     }
 
 }
