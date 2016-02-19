@@ -2,8 +2,8 @@
 
 namespace Windward\Mvc\Controller;
 
-use Windward\Core\Container;
 use Windward\Core\Response\Json as JsonResponse;
+use Windward\Core\Response\Plain as PlainResponse;
 
 Class Rest extends \Windward\Mvc\Controller {
 
@@ -49,6 +49,12 @@ Class Rest extends \Windward\Mvc\Controller {
         return $response->setPayload($result);
     }
 
+    public function plainSuccess($content) {
+        $response = new PlainResponse($this->container);
+        $response->setContentType(PlainResponse::CONTENT_TYPE_JSON);
+        return $response->setContent($content);
+    }
+    
     public function httpHeaders() {
         $header = array(
             'APP_VERSION' => $this->request->getServer('HTTP_APP_VERSION'),
