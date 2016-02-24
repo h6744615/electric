@@ -109,10 +109,13 @@ Class Model extends \Windward\Core\Base {
     /*
      * 获取单表的单条/多条数据 todo
      */
-    public function get($table = '', $fields = '*', $cond = array(),$single = true) {
+    public function get($table = '', $fields = '*', $cond = array(),$single = true,$orderby = null) {
         $sql = "select {$fields} from {$table} where 1 = 1";
 
         $params = $this->cond($sql, $cond);
+        if ($orderby) {
+            $sql .= " order by {$orderby}";
+        }
         $stmt = $this->query($sql, $params);
         if ($stmt) {
             return $single ? $stmt->fetch() : $stmt->fetchAll();
@@ -274,7 +277,7 @@ Class Model extends \Windward\Core\Base {
     
     public function paginate($sql,$curpage = 1,$limit = 20) {
         $selectSql = preg_replace('/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i', '${1}', $sql);
-        $countSql = preg_replace('/select\s*.*?from\s*(.*)/', 'select count(*) as cnt from ${1}', $selectSql);
+        $countSql = preg_replace('/select\s*.*?from\s*(.*)/i', 'select count(*) as cnt from ${1}', $selectSql);
         if ($curpage < 1) {
             $curpage = 1;
         }

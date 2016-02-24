@@ -25,7 +25,7 @@ class Validator extends \Windward\Core\Base {
     }
 
     public function isFloat($data) {
-        $regex = '/^([1-9]+[0-9]*)|([0-9]{1}\.[0-9]+)|([1-9]+[0-9]*\.[0-9]+)$/';
+        $regex = '/^([1-9]+[0-9]*$)|([0-9]{1}\.[0-9]+$)|([1-9]+[0-9]*\.[0-9]+)$/';
         return preg_match($regex, $data);
     }
 
@@ -50,6 +50,17 @@ class Validator extends \Windward\Core\Base {
         $time = strtotime($data);
         return (date('Y-m-d H:i:s', $time) !== $data) ? false : true;
     }
+    
+    public function isShortDateTime($data) {
+        $regex = "/^(19|20)[0-9]{2}\-[0-1]{1}[0-9]{1}\-[0-3]{1}[0-9]{1}\s+[0-2]{1}[0-9]{1}:[0-5]{1}[0-9]{1}$/";
+
+        if (!preg_match($regex, $data)) {
+            return false;
+        }
+
+        $time = strtotime($data);
+        return (date('Y-m-d H:i', $time) !== $data) ? false : true;
+    }
 
     public function isHour($data) {
         $regex = "/^[0-9]{1,2}$/";
@@ -57,13 +68,13 @@ class Validator extends \Windward\Core\Base {
         if (!preg_match($regex, $data)) {
             return false;
         } else {
-            return ($hour >= 0 && $hour < 24) ? true : false;
+            return ($data >= 0 && $data < 24) ? true : false;
         }
     }
 
     public function isPassword($data) {
         $regex = '/^[0-9a-z]{6,12}$/';
-        return preg_match($regex, $this->data[$field]);
+        return preg_match($regex, $data);
     }
 
 }
