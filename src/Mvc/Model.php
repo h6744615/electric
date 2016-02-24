@@ -277,7 +277,7 @@ Class Model extends \Windward\Core\Base {
     
     public function paginate($sql,$curpage = 1,$limit = 20) {
         $selectSql = preg_replace('/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i', '${1}', $sql);
-        $countSql = preg_replace('/select\s*.*?from\s*(.*)/i', 'select count(*) as cnt from ${1}', $selectSql);
+        $countSql = preg_replace('/select.*?from(.*)/is', 'select count(*) as cnt from ${1}', $selectSql);
         if ($curpage < 1) {
             $curpage = 1;
         }
@@ -285,7 +285,7 @@ Class Model extends \Windward\Core\Base {
         $selectSql .= " limit {$offset},{$limit}";
         
         $items = $this->fetchAll($selectSql);
-        $totalItems = $this->fetchOne($countSql)['cnt'];
+        $totalItems = (int)$this->fetchOne($countSql)['cnt'];
         if (!$totalItems) {
             return array(
                 'total_page' => 0,
