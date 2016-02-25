@@ -107,4 +107,28 @@ class Util extends \Windward\Core\Base {
         return true;
     }
 
+    /**
+     * 将字段值转换成string
+     * 
+     * @param array|object $data
+     * @return array|object
+     */
+    public static function stringValues(&$data) {
+        if (is_array($data)) {
+            foreach ($data as &$value) {
+                if (!is_array($value) && !is_object($value)) {
+                    $value = (string) $value;
+                } else {
+                    self::stringValues($value);
+                }
+            }
+        } else if (is_object($data)) {
+            $array = get_object_vars($data);
+            self::stringValues($array);
+            foreach ($array as $key => $value) {
+                $data->{$key} = $value;
+            }
+        }
+    }
+
 }
