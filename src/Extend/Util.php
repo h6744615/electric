@@ -131,4 +131,37 @@ class Util extends \Windward\Core\Base {
         }
     }
 
+    /**
+     * 格式化时间
+     * 
+     * 当天的返回时间
+     * 七天内返回天
+     * 一月内返回周
+     * 返回月
+     * 
+     * @param int|string $time 时间
+     * @return string
+     */
+    public static function formatTimeAgo($time) {
+        if (!is_int($time)) {
+            $time = strtotime($time);
+        }
+        $now = time();
+
+        $date = date('Y-m-d', $time);
+        $today = date('Y-m-d', $now);
+        if ($date == $today) {
+            return date('H:i', $time);
+        }
+        $diff = $now - $time;
+        if ($diff < 604800) {
+            return floor($diff / 86400.0) . '天前';
+        }
+        $diff = $now - $time;
+        if ($diff < 2592000) {
+            return floor($diff / 604800.0) . '周前';
+        }
+        return floor($diff / 2592000.0) . '月前';
+    }
+
 }
