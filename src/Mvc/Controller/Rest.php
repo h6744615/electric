@@ -7,8 +7,11 @@ use Windward\Core\Response\Plain as PlainResponse;
 
 Class Rest extends \Windward\Mvc\Controller {
 
-    public function error($key) {
-        $key = 'controller.' . strtolower((new \ReflectionClass($this))->getShortName()) . '.' . $key;
+    public function error($key, $className = null) {
+        if (is_null($className)) {
+            $className = (new \ReflectionClass($this))->getShortName();
+        }
+        $key = 'controller.' . strtolower($className) . '.' . $key;
         $error = $this->getLanguage()->error($key);
         $result = array(
             'status' => 'NG',
@@ -20,8 +23,8 @@ Class Rest extends \Windward\Mvc\Controller {
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
-    
-    public function halt($key,$needLogin = 1) {
+
+    public function halt($key, $needLogin = 1) {
         $key = 'controller.' . strtolower((new \ReflectionClass($this))->getShortName()) . '.' . $key;
         $error = $this->getLanguage()->error($key);
         $result = array(
@@ -54,7 +57,7 @@ Class Rest extends \Windward\Mvc\Controller {
         $response->setContentType(PlainResponse::CONTENT_TYPE_JSON);
         return $response->setContent($content);
     }
-    
+
     public function httpHeaders() {
         $header = array(
             'APP_VERSION' => $this->request->getServer('HTTP_APP_VERSION'),
@@ -67,7 +70,7 @@ Class Rest extends \Windward\Mvc\Controller {
 
         return $header;
     }
-    
+
     public function error404Action() {
         $json = new \Windward\Core\Response\Json($this->container);
         $json->setPayload(array(
