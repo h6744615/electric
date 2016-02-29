@@ -11,7 +11,7 @@ Class Rest extends \Windward\Mvc\Controller {
         $key = 'controller.' . strtolower((new \ReflectionClass($this))->getShortName()) . '.' . $key;
         $error = $this->getLanguage()->error($key);
         $result = array(
-            'status' => 'NG',
+            'status' => '0',
             'code' => $error['code'],
             'msg' => $error['msg'],
             'data' => new \stdClass,
@@ -25,7 +25,7 @@ Class Rest extends \Windward\Mvc\Controller {
         $key = 'controller.' . strtolower((new \ReflectionClass($this))->getShortName()) . '.' . $key;
         $error = $this->getLanguage()->error($key);
         $result = array(
-            'status' => 'NG',
+            'status' => '0',
             'code' => $error['code'],
             'msg' => $error['msg'],
             'data' => new \stdClass,
@@ -39,7 +39,7 @@ Class Rest extends \Windward\Mvc\Controller {
 
     public function success($data = null, $msg = '') {
         $result = array(
-            'status' => 'OK',
+            'status' => '1',
             'code' => 0,
             'msg' => $msg,
             'data' => $data ? $data : new \stdClass(),
@@ -71,7 +71,7 @@ Class Rest extends \Windward\Mvc\Controller {
     public function error404Action() {
         $json = new \Windward\Core\Response\Json($this->container);
         $json->setPayload(array(
-            'status' => 'NG',
+            'status' => '1',
             'code' => '404',
             'msg' => 'Not Found',
             'data' => new \stdClass,
