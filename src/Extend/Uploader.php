@@ -15,7 +15,6 @@ class Uploader extends \Windward\Core\Base {
 
     public function setBasePath($path)
     {
-        $parent = basename($path);
         if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
@@ -33,12 +32,13 @@ class Uploader extends \Windward\Core\Base {
     public function handle()
     {
         $files = array();
+        $post = $this->request->getPost();
         foreach ($_FILES as $key => $file) {
             if (!is_array($file['name']) && !is_array($file['tmp_name'])) {
                 $file['config_rule_name'] = $key;
                 $file['error'] = '';
                 $file['dest'] = array();
-                $this->processFile($file);
+                $this->processFile($file, $post, $key);
                 $files[$key] = $file;
             } else {
                 $count = count($file['name']);
@@ -53,27 +53,42 @@ class Uploader extends \Windward\Core\Base {
                         'error' => '',
                         'dest' => array(),
                     );
-                    $this->processFile($one);
+                    $this->processFile($one, $post, $key);
                     $files[$key][$i] = $one;
                 }
             }
         }
         $this->files = $files;
     }
-
-    public function processFile(&$file)
+    
+    public function getSavePath($rules, $post, $key)
     {
-        $rules = $this->getFileRules($file['config_rule_name']);
-        if (isset($rules['savePath'])) {
-            $savePath = $rules['savePath'];
-        } else {
-            $savePath = date('Y/m/d');
+        if (isset($post['prefix']) && $post['prefix'] && is_array($post['prefix'])) {
+            foreach ($post['prefix'] as $one => $value) {
+                if (!preg_match('#^([a-zA-z0-1_*]+)$#', $one)) {
+                    continue;
+                }
+                $one = str_replace('*', '.*', $one);
+                if (preg_match("#^{$one}$#", $key)) {
+                    return $value;
+                }
+            }
         }
+        if (isset($rules['savePath'])) {
+            return $rules['savePath'];
+        }
+        return date('Y/m/d');
+    }
+    
+    public function processFile(&$file, $post, $fileKey)
+    {
+        $rules = $this->getFileRules($file['config_rule_name']);        
+        $savePath = $this->getSavePath($rules, $post, $fileKey);
         $valid = $this->validFile($file, $rules);
         if ($valid === false) {
             $this->hasError = true;
         }
-        if ($this->hasError === true && $processOnOneError === false) {
+        if ($this->hasError === true && $this->processOnOneError === false) {
             return false;
         }
         $dir = $this->basePath . $savePath;
@@ -90,8 +105,8 @@ class Uploader extends \Windward\Core\Base {
             $this->generateThubms($destFileName, $rules['thumbs']);
         }
         $file['dest'] = array(
-            'path' => $savePath,
-            'name' => $destFileName,
+            'file_name' => $destName,
+            'url' => $this->request->getSchemaHost() . '/' . $destName,
         );
     }
 

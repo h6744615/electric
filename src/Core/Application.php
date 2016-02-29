@@ -15,9 +15,9 @@ class Application extends Base {
     public function handle($uri = null)
     {
         if (is_null($uri)) {
-            $uri = $_SERVER['PATH_INFO'] ? $_SERVER['REQUEST_URI'] : $_SERVER['REQUEST_URI'];
-            $this->container->router->handle($uri);
+            $uri = $_SERVER['PATH_INFO'] ? $_SERVER['PATH_INFO'] : $_SERVER['REQUEST_URI'];
         }
+        $this->container->router->handle($uri);
     }
 
 }
