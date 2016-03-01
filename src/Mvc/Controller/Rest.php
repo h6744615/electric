@@ -24,8 +24,11 @@ Class Rest extends \Windward\Mvc\Controller {
         return $response->setPayload($result);
     }
 
-    public function halt($key, $needLogin = 1) {
-        $key = 'controller.' . strtolower((new \ReflectionClass($this))->getShortName()) . '.' . $key;
+    public function halt($key, $needLogin = 1, $className = null) {
+        if (is_null($className)) {
+            $className = (new \ReflectionClass($this))->getShortName();
+        }
+        $key = 'controller.' . strtolower($className) . '.' . $key;
         $error = $this->getLanguage()->error($key);
         $result = array(
             'status' => '0',
