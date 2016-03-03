@@ -38,6 +38,13 @@ class Language {
     }
     
     public function info($key) {
-        
+        if (is_null($this->info)) {
+            include self::$baseDir . $this->lang . '/' . 'info.php';
+            $this->info = $info;
+        }
+        if (!Util::issetArrayValue($this->info, $key)) {
+            return null;
+        }
+        return Util::getArrayValue($this->info, $key);
     }
 }

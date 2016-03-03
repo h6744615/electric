@@ -6,7 +6,7 @@ use Windward\Core\Response\Json as JsonResponse;
 use Windward\Core\Response\Plain as PlainResponse;
 
 Class Rest extends \Windward\Mvc\Controller {
-
+    
     public function error($key, $className = null) {
         if (is_null($className)) {
             $className = (new \ReflectionClass($this))->getShortName();
@@ -18,36 +18,50 @@ Class Rest extends \Windward\Mvc\Controller {
             'code' => $error['code'],
             'msg' => $error['msg'],
             'data' => new \stdClass,
-            'need_login' => 0,
+            'need_relogin' => 0,
         );
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
 
-    public function halt($key, $needLogin = 1) {
-        $key = 'controller.' . strtolower((new \ReflectionClass($this))->getShortName()) . '.' . $key;
-        $error = $this->getLanguage()->error($key);
+    public function halt($key, $needLogin = 1,$className = null) {
+        if (is_null($className)) {
+            $className = (new \ReflectionClass($this))->getShortName();
+        }
+        $key = 'controller.' . strtolower($className) . '.' . $key;
+        $error = $this->getLanguage()->error($key,$className);
         $result = array(
             'status' => '0',
             'code' => $error['code'],
             'msg' => $error['msg'],
             'data' => new \stdClass,
-            'need_login' => $needLogin,
+            'need_relogin' => $needLogin,
         );
+        \Windward\Extend\Util::stringValues($result);
         $response = new JsonResponse($this->container);
         $response->setPayload($result);
         $response->output();
         die();
     }
 
-    public function success($data = null, $msg = '') {
+    public function success($data = null, $key = null,$className = null,$needLogin = 0) {
+        $info = array();
+        if ($key) {
+            if (is_null($className)) {
+                $className = (new \ReflectionClass($this))->getShortName();
+            }
+            $key = 'controller.' . strtolower($className) . '.' . $key;
+            $info = $this->getLanguage()->info($key,$className);
+        }
+        
         $result = array(
             'status' => '1',
             'code' => 0,
-            'msg' => $msg,
+            'msg' => $info['msg'],
             'data' => $data ? $data : new \stdClass(),
-            'need_login' => 0,
+            'need_relogin' => $needLogin,
         );
+        \Windward\Extend\Util::stringValues($result);
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
@@ -78,7 +92,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'code' => '404',
             'msg' => 'Not Found',
             'data' => new \stdClass,
-            'need_login' => 0,
+            'need_relogin' => 0,
         ));
         $json->output();
     }
