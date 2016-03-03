@@ -11,7 +11,8 @@
         "psr/log": "1.*",
         "smarty/smarty": "~3.1",
         "catfan/Medoo": "*",
-        "intervention/image": "2.*"
+        "intervention/image": "2.*",
+        "pagerfanta/pagerfanta": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0",
