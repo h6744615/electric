@@ -49,7 +49,7 @@ Class View Extends \Smarty {
     public function display($template = null, $cacheId = null, $compileId = null, $parent = null)
     {
         if (is_null($template) && $this->container instanceof Container) {
-            $template = $this->container->request->getNormalizedUri();
+            $template = ucfirst($this->container->request->getNormalizedUri());
         }
         $template .= $this->templateExtension;
         parent::display($template, $cacheId, $compileId, $parent);
