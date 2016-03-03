@@ -12,6 +12,7 @@ class Pager extends Pagerfanta
         if (!is_numeric($currentPage) || !$currentPage) {
             $currentPage = 1;
         }
+        $this->setNormalizeOutOfRangePages(true);
         parent::setCurrentPage($currentPage);
     }
 
