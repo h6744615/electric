@@ -18,7 +18,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'code' => $error['code'],
             'msg' => $error['msg'],
             'data' => new \stdClass,
-            'need_login' => 0,
+            'need_relogin' => 0,
         );
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
@@ -35,7 +35,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'code' => $error['code'],
             'msg' => $error['msg'],
             'data' => new \stdClass,
-            'need_login' => $needLogin,
+            'need_relogin' => $needLogin,
         );
         $response = new JsonResponse($this->container);
         $response->setPayload($result);
@@ -91,7 +91,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'code' => '404',
             'msg' => 'Not Found',
             'data' => new \stdClass,
-            'need_login' => 0,
+            'need_relogin' => 0,
         ));
         $json->output();
     }
