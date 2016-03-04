@@ -4,7 +4,7 @@ namespace Windward\Extend;
 
 use Windward\Extend\Util;
 
-class Validator
+class Validator extends \Windward\Core\Base
 {
 
     var $error = null;
