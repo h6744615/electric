@@ -7,7 +7,7 @@ use Windward\Extend\Util;
 class Request
 {
 
-    private $post;
+    private $post = array();
     private $normalizedUri;
 
     public static function build(Container $container)
@@ -78,6 +78,10 @@ class Request
     public function isPost()
     {
         return $this->getServer('REQUEST_METHOD') == 'POST';
+    }
+    
+    public function isComplete() {
+        return $this->getPost('complete') && $this->isPost();
     }
 
     public function getNormalizedUri()
