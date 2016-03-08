@@ -112,6 +112,10 @@ class Validator extends \Windward\Core\Base
         $regex = '/^[0-9]+$/';
         return preg_match($regex, $data);
     }
+    
+    public function isNotNull($data) {
+        return $data ? true : false;
+    }
 
     public function isMail($data)
     {
