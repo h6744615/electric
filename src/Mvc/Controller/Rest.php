@@ -56,7 +56,7 @@ Class Rest extends \Windward\Mvc\Controller {
         $result = array(
             'status' => '1',
             'code' => 0,
-            'msg' => $info['msg'],
+            'msg' => isset($info['msg']) ? $info['msg'] : '',
             'data' => $data ? $data : new \stdClass(),
             'need_relogin' => $needLogin,
         );
