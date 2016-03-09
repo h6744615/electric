@@ -5,6 +5,7 @@ namespace Windward\Lib;
 class Curl extends \Windward\Core\Base {
     private $headers = array();
     private $postDatas = array();
+    private $files = array();
     private $url = '';
     
     public function setUrl($url) {
@@ -23,17 +24,22 @@ class Curl extends \Windward\Core\Base {
         $postDatas ? $this->postDatas = $postDatas : null;
     }
     
+    public function setUploadFile($filename,$file) {
+        $this->files[$filename] = new \CURLFile($file);
+    }
+    
     public function request() {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
+        curl_setopt($ch,CURLOPT_BINARYTRANSFER,1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         if ($this->headers) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         }
         
         curl_setopt($ch, CURLOPT_POST, 1);
+        $this->postDatas = $this->postDatas + $this->files;
         if ($this->postDatas) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postDatas);
         }
@@ -43,4 +49,5 @@ class Curl extends \Windward\Core\Base {
         
         return $output;
     }
+
 }
