@@ -10,19 +10,14 @@ Class Model extends \Windward\Core\Base {
     protected $pdo;
     protected $transactionLevel = 0;
     protected $logging = true;
-    protected $logger = null;
 
     public function setPdo(\PDO $pdo) {
         $this->pdo = $pdo;
     }
 
-    public function setLogger(Logger $logger) {
-        $this->logger = $logger;
-    }
-
     public function exec($sql) {
         if ($this->logging && $this->logger) {
-            $this->logger->log('SQL:', $sql);
+            $this->logger->log('db', 'SQL:', $sql);
         }
         return $this->pdo->exec($sql);
     }
@@ -56,7 +51,7 @@ Class Model extends \Windward\Core\Base {
 
     protected function query($sql, $params = null) {
         if ($this->logging && $this->logger) {
-            $this->logger->log('SQL:', $sql, 'PARAMS:', $params);
+            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
         }
         $stmt = $this->pdo->prepare($sql);
         if ($params) {
@@ -120,7 +115,8 @@ Class Model extends \Windward\Core\Base {
      * 获取单表的单条/多条数据 todo
      */
 
-    public function get($table = '', $fields = '*', $cond = array(), $single = true, $orderby = null) {
+    public function get($table = '', $fields = '*', $cond = array(),
+                        $single = true, $orderby = null) {
         $sql = "select {$fields} from {$table} where 1 = 1";
 
         $params = $this->cond($sql, $cond);
@@ -296,9 +292,9 @@ Class Model extends \Windward\Core\Base {
             $limit = 20;
         }
         $selectSql = preg_replace('/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i',
-                '${1}', $sql);
+                                  '${1}', $sql);
         $countSql = preg_replace('/select.*?from(.*)/is',
-                'select count(*) as cnt from ${1}', $selectSql);
+                                 'select count(*) as cnt from ${1}', $selectSql);
         $offset = ($curpage - 1) * $limit;
         $selectSql .= " limit {$offset},{$limit}";
 

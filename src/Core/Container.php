@@ -83,10 +83,6 @@ class Container {
         $model = new $name($this);
         //$model->setDbConnection($this->database);
         $model->setPdo($this->connection);
-        $modelLogger = $this->modelLogger;
-        if (null !== $modelLogger) {
-            $model->setLogger($modelLogger);
-        }
         $this->items[$name] = $model;
         return $model;
     }
