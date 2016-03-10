@@ -287,13 +287,18 @@ Class Model extends \Windward\Core\Base {
     }
 
     public function paginate($sql, $curpage = 1, $limit = 20, $cond = null) {
+        $curpage = (int) $curpage;
+        $limit = (int) $limit;
+        if ($curpage === 0) {
+            $curpage = 1;
+        }
+        if ($limit === 0) {
+            $limit = 20;
+        }
         $selectSql = preg_replace('/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i',
                 '${1}', $sql);
         $countSql = preg_replace('/select.*?from(.*)/is',
                 'select count(*) as cnt from ${1}', $selectSql);
-        if ($curpage < 1) {
-            $curpage = 1;
-        }
         $offset = ($curpage - 1) * $limit;
         $selectSql .= " limit {$offset},{$limit}";
 
