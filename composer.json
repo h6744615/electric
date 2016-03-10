@@ -10,7 +10,6 @@
         "ext-redis": "*",
         "psr/log": "1.*",
         "smarty/smarty": "~3.1",
-        "catfan/Medoo": "*",
         "intervention/image": "2.*",
         "pagerfanta/pagerfanta": "*"
     },
