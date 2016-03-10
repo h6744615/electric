@@ -6,6 +6,27 @@ use Windward\Core\Response\Json as JsonResponse;
 use Windward\Core\Response\Plain as PlainResponse;
 
 Class Rest extends \Windward\Mvc\Controller {
+    
+    private $output;
+    
+    public function afterHandle() {
+        if ($this->logger) {
+            $this->logger->log('api', 
+                'URL:',$this->request->getServer('REQUEST_URI'),
+                'Header:',$this->httpHeaders(),
+                'Post:',$this->request->getPost(),
+                'Output:',$this->getOutput()
+            );
+        }
+    }
+    
+    public function setOutput(&$output) {
+        $this->output = $output;
+    }
+    
+    public function getOutput() {
+        return $this->output;
+    }
 
     public function error($key, $className = null) {
         if (is_null($className)) {
@@ -20,6 +41,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'data' => new \stdClass,
             'need_relogin' => 0,
         );
+        $this->setOutput($result);
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
@@ -37,6 +59,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'data' => new \stdClass,
             'need_relogin' => $needLogin,
         );
+        $this->setOutput($result);
         $response = new JsonResponse($this->container);
         $response->setPayload($result);
         $response->output();
@@ -61,6 +84,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'need_relogin' => $needLogin,
         );
         \Windward\Extend\Util::stringValues($result);
+        $this->setOutput($result);
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
