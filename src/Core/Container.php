@@ -24,7 +24,7 @@ class Container {
     public function getModelNamespace() {
         return $this->modelNamespace;
     }
-    
+
     /**
      * 注册依赖
      * 
@@ -46,7 +46,7 @@ class Container {
     public function __get($name) {
         return $this->items[$name];
     }
-    
+
     /**
      * 通过名称生成Controller对象并缓存
      * 
@@ -65,7 +65,7 @@ class Container {
         $this->items[$name] = $controller;
         return $controller;
     }
-    
+
     /**
      * 通过名称生成Controller对象并缓存
      * 
@@ -83,8 +83,12 @@ class Container {
         $model = new $name($this);
         //$model->setDbConnection($this->database);
         $model->setPdo($this->connection);
-        
+        $modelLogger = $this->modelLogger;
+        if (null !== $modelLogger) {
+            $model->setLogger($modelLogger);
+        }
         $this->items[$name] = $model;
         return $model;
     }
+
 }
