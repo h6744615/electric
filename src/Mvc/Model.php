@@ -22,7 +22,7 @@ Class Model extends \Windward\Core\Base {
 
     public function exec($sql) {
         if ($this->logging && $this->logger) {
-            $this->logger($sql);
+            $this->logger->log('SQL:', $sql);
         }
         return $this->pdo->exec($sql);
     }
