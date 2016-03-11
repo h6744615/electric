@@ -30,8 +30,8 @@ class Logger extends Base {
             if (!is_dir($dir)) {
                 @mkdir($dir, $this->filePermission, true);
             }
-            if (isset($this->fileResources[$type]) && is_resource($this->fileResource)) {
-                fclose($this->fileResource[$type]);
+            if (isset($this->fileResources[$type]) && is_resource($this->fileResources[$type])) {
+                fclose($this->fileResources[$type]);
                 unset($this->fileResources[$type]);
             }
             $this->currentDay = $today;
