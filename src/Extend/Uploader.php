@@ -139,9 +139,12 @@ class Uploader extends \Windward\Core\Base {
             $thumbName .= $name;
         }
         $img = ImageManagerStatic::make($file);
+        /*
         $img->resize($thumb['w'], $thumb['h'], function ($constraint) {
             $constraint->aspectRatio();
         })->save($thumbName . '.' . $pathInfo['extension']);
+         */
+        $img->crop($thumb['w'], $thumb['h'])->save($thumbName . '.' . $pathInfo['extension']);
         if ($output) {
             // send HTTP header and output image data
             header('Content-Type: image/png');
