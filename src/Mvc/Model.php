@@ -186,7 +186,10 @@ Class Model extends \Windward\Core\Base {
             $vals[":cond_{$key}"] = $val;
         }
         $sql = rtrim($sql, ',');
-
+        
+        if ($this->logging && $this->logger) {
+            $this->logger->log('db', 'SQL:', $sql, 'PARAM:', $vals);
+        }
         $stmt = $this->pdo->prepare($sql);
         if ($stmt->execute($vals) === false) {
             return false;
