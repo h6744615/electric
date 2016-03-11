@@ -28,20 +28,29 @@ class Curl extends \Windward\Core\Base {
         $this->files[$filename] = new \CURLFile($file);
     }
     
-    public function request() {
+    public function request($json = false) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch,CURLOPT_BINARYTRANSFER,1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         if ($this->headers) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            if ($json) {
+                $this->headers[] = 'Content-Type:application/json; charset=utf-8';
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            } else {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            }
         }
         
         curl_setopt($ch, CURLOPT_POST, 1);
         $this->postDatas = $this->postDatas + $this->files;
         if ($this->postDatas) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postDatas);
+            if ($json) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($this->postDatas));
+            } else {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postDatas);
+            }
         }
         
         $output = curl_exec($ch);
