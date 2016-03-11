@@ -34,13 +34,11 @@ class Curl extends \Windward\Core\Base {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch,CURLOPT_BINARYTRANSFER,1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
+        if ($json) {
+            $this->headers[] = 'Content-Type:application/json; charset=utf-8';
+        }
         if ($this->headers) {
-            if ($json) {
-                $this->headers[] = 'Content-Type:application/json; charset=utf-8';
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-            } else {
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-            }
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         }
         
         curl_setopt($ch, CURLOPT_POST, 1);
