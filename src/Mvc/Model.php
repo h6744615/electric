@@ -4,25 +4,29 @@ namespace Windward\Mvc;
 
 use Windward\Core\Logger;
 
-Class Model extends \Windward\Core\Base {
+class Model extends \Windward\Core\Base
+{
 
     protected $dbConnection;
     protected $pdo;
     protected $transactionLevel = 0;
     protected $logging = true;
 
-    public function setPdo(\PDO $pdo) {
+    public function setPdo(\PDO $pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function exec($sql) {
+    public function exec($sql)
+    {
         if ($this->logging && $this->logger) {
             $this->logger->log('db', 'SQL:', $sql);
         }
         return $this->pdo->exec($sql);
     }
 
-    public function begin() {
+    public function begin()
+    {
         if ($this->transactionLevel === 0) {
             $this->pdo->beginTransaction();
         } else {
@@ -31,7 +35,8 @@ Class Model extends \Windward\Core\Base {
         $this->transactionLevel++;
     }
 
-    public function rollback() {
+    public function rollback()
+    {
         $this->transactionLevel--;
         if ($this->transactionLevel === 0) {
             $this->pdo->rollBack();
@@ -40,7 +45,8 @@ Class Model extends \Windward\Core\Base {
         }
     }
 
-    public function commit() {
+    public function commit()
+    {
         $this->transactionLevel--;
         if ($this->transactionLevel === 0) {
             $this->pdo->commit();
@@ -49,7 +55,8 @@ Class Model extends \Windward\Core\Base {
         }
     }
 
-    protected function query($sql, $params = null) {
+    protected function query($sql, $params = null)
+    {
         if ($this->logging && $this->logger) {
             $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
         }
@@ -63,7 +70,8 @@ Class Model extends \Windward\Core\Base {
         return $rs ? $stmt : null;
     }
 
-    public function fetchOne($sql, $params = null) {
+    public function fetchOne($sql, $params = null)
+    {
         $stmt = $this->query($sql, $params);
         if ($stmt) {
             return $stmt->fetch();
@@ -71,7 +79,8 @@ Class Model extends \Windward\Core\Base {
         return array();
     }
 
-    public function fetchAll($sql, $params = null) {
+    public function fetchAll($sql, $params = null)
+    {
         $stmt = $this->query($sql, $params);
         if ($stmt) {
             return $stmt->fetchAll();
@@ -79,7 +88,8 @@ Class Model extends \Windward\Core\Base {
         return array();
     }
 
-    public function cond(&$sql, $cond = array()) {
+    public function cond(&$sql, $cond = array())
+    {
         $params = array();
         foreach ($cond as $key => $val) {
             if (preg_match('/^\[eq\]/', $key)) {
@@ -114,9 +124,13 @@ Class Model extends \Windward\Core\Base {
     /*
      * 获取单表的单条/多条数据 todo
      */
-
-    public function get($table = '', $fields = '*', $cond = array(),
-                        $single = true, $orderby = null) {
+    public function get(
+        $table = '',
+        $fields = '*',
+        $cond = array(),
+        $single = true,
+        $orderby = null
+    ) {
         $sql = "select {$fields} from {$table} where 1 = 1";
 
         $params = $this->cond($sql, $cond);
@@ -130,7 +144,8 @@ Class Model extends \Windward\Core\Base {
         return array();
     }
 
-    public function count($table = '', $cond = array()) {
+    public function count($table = '', $cond = array())
+    {
         $sql = "select count(*) as cnt from {$table} where 1 = 1";
         $params = $this->cond($sql, $cond);
         $stmt = $this->query($sql, $params);
@@ -140,7 +155,8 @@ Class Model extends \Windward\Core\Base {
         return 0;
     }
 
-    public function update($table = '', $data = array(), $cond = array()) {
+    public function update($table = '', $data = array(), $cond = array())
+    {
         if (!$table || !$data) {
             return false;
         }
@@ -198,7 +214,8 @@ Class Model extends \Windward\Core\Base {
         return true;
     }
 
-    public function insert($table = '', $data = array(), $ignore = false) {
+    public function insert($table = '', $data = array(), $ignore = false)
+    {
         if (!$table || !$data) {
             return false;
         }
@@ -222,6 +239,9 @@ Class Model extends \Windward\Core\Base {
         $sql = rtrim($sql, ',');
 
         $stmt = $this->pdo->prepare($sql);
+        if ($this->logging && $this->logger) {
+            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
+        }
         if ($stmt->execute($vals) === false) {
             return false;
         }
@@ -229,7 +249,8 @@ Class Model extends \Windward\Core\Base {
         return $this->pdo->lastInsertId();
     }
 
-    public function replace($table = '', $data = array()) {
+    public function replace($table = '', $data = array())
+    {
         if (!$table || !$data) {
             return false;
         }
@@ -248,7 +269,9 @@ Class Model extends \Windward\Core\Base {
             $vals[":{$key}"] = $val;
         }
         $sql = rtrim($sql, ',');
-
+        if ($this->logging && $this->logger) {
+            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
+        }
         $stmt = $this->pdo->prepare($sql);
         if ($stmt->execute($vals) === false) {
             return false;
@@ -257,7 +280,8 @@ Class Model extends \Windward\Core\Base {
         return $this->pdo->lastInsertId();
     }
 
-    public function delete($table = '', $cond = array()) {
+    public function delete($table = '', $cond = array())
+    {
         if (!$table || !$cond) {
             return false;
         }
@@ -276,7 +300,9 @@ Class Model extends \Windward\Core\Base {
         }
 
         $sql = rtrim($sql, ',');
-
+        if ($this->logging && $this->logger) {
+            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
+        }
         $stmt = $this->pdo->prepare($sql);
         if ($stmt->execute($vals) === false) {
             return false;
@@ -285,7 +311,8 @@ Class Model extends \Windward\Core\Base {
         return true;
     }
 
-    public function paginate($sql, $curpage = 1, $limit = 20, $cond = null) {
+    public function paginate($sql, $curpage = 1, $limit = 20, $cond = null)
+    {
         $curpage = (int) $curpage;
         $limit = (int) $limit;
         if ($curpage === 0) {
@@ -294,10 +321,16 @@ Class Model extends \Windward\Core\Base {
         if ($limit === 0) {
             $limit = 20;
         }
-        $selectSql = preg_replace('/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i',
-                                  '${1}', $sql);
-        $countSql = preg_replace('/select.*?from(.*)/is',
-                                 'select count(*) as cnt from ${1}', $selectSql);
+        $selectSql = preg_replace(
+            '/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i',
+            '${1}',
+            $sql
+        );
+        $countSql = preg_replace(
+            '/select.*?from(.*)/is',
+            'select count(*) as cnt from ${1}',
+            $selectSql
+        );
         $offset = ($curpage - 1) * $limit;
         $selectSql .= " limit {$offset},{$limit}";
 
@@ -320,5 +353,4 @@ Class Model extends \Windward\Core\Base {
             'items' => $items,
         );
     }
-
 }
