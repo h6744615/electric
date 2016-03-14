@@ -4,7 +4,8 @@ namespace Windward\Mvc;
 use Windward\Core\Container;
 use Windward\Core\Language;
 
-Class Controller extends \Windward\Core\Base {
+class Controller extends \Windward\Core\Base
+{
     
     protected $container;
     private $language = null;
@@ -27,7 +28,8 @@ Class Controller extends \Windward\Core\Base {
         $this->view->display('404');
     }
     
-    function redirect($url, $js = false, $msg = null, $delay = 0) {
+    function redirect($url, $js = false, $msg = null, $delay = 0)
+    {
         if ($js) {
             $output = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
             $output.= '<script type="text/javascript">';
@@ -46,5 +48,4 @@ Class Controller extends \Windward\Core\Base {
             exit();
         }
     }
-
 }

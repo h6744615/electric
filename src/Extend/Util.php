@@ -2,16 +2,18 @@
 
 namespace Windward\Extend;
 
-class Util extends \Windward\Core\Base {
+class Util extends \Windward\Core\Base
+{
 
     /**
      *  [数组方法] 按某列的值分组
-     *  
+     *
      *  @param array $data 需要被分组的内容
      *  @param string $key 自定义KEY，默认为id
      *  @return array $data 分组处理后的内容
      */
-    public static function groupArray(array $data, $key = 'id') {
+    public static function groupArray(array $data, $key = 'id')
+    {
         if (is_null($key)) {
             return null;
         }
@@ -24,13 +26,14 @@ class Util extends \Windward\Core\Base {
 
     /**
      * 按某列的值去重,后面的值会覆盖前面的值
-     * 
+     *
      * @param array $data
      * @param string $key
      * @param string|array $fields 需要保留的列
      * @return array
      */
-    public static function uniqueArray(array $data, $key = 'id', $fields = null) {
+    public static function uniqueArray(array $data, $key = 'id', $fields = null)
+    {
         if (is_null($key)) {
             return null;
         }
@@ -52,16 +55,17 @@ class Util extends \Windward\Core\Base {
 
     /**
      * 判断数组中有没有指定的键
-     * 
+     *
      * @param array $data
      * @param string $key 传入 . 分隔的key时判断嵌套数组
      * @return boolean
      */
-    public static function issetArrayValue(array $data, $key) {
+    public static function issetArrayValue(array $data, $key)
+    {
         $ptr = $data;
         foreach (explode('.', $key) as $part) {
             if (!isset($ptr[$part])) {
-                return FALSE;
+                return false;
             }
             $ptr = $ptr[$part];
         }
@@ -70,12 +74,13 @@ class Util extends \Windward\Core\Base {
 
     /**
      * 获得数组中指定的值
-     * 
+     *
      * @param array $data
      * @param string $key 传入 . 分隔的key是获得嵌套数组中的值
      * @return boolean
      */
-    public static function getArrayValue($data, $key) {
+    public static function getArrayValue($data, $key)
+    {
         $ptr = $data;
         foreach (explode('.', $key) as $part) {
             $ptr = $ptr[$part];
@@ -85,12 +90,13 @@ class Util extends \Windward\Core\Base {
 
     /**
      * 设置数组中指定的值
-     * 
+     *
      * @param array $data
      * @param string $key 传入 . 分隔的key是设置嵌套数组中的值
      * @return boolean
      */
-    public static function setArrayValue(&$data, $key, $value) {
+    public static function setArrayValue(&$data, $key, $value)
+    {
         $ptr = &$data;
         foreach (explode('.', $key) as $part) {
             if (!isset($ptr[$part])) {
@@ -102,18 +108,20 @@ class Util extends \Windward\Core\Base {
         return true;
     }
 
-    public static function delArrayValue($data, $key) {
+    public static function delArrayValue($data, $key)
+    {
         return false;
         return true;
     }
 
     /**
      * 将字段值转换成string
-     * 
+     *
      * @param array|object $data
      * @return array|object
      */
-    public static function stringValues(&$data) {
+    public static function stringValues(&$data)
+    {
         if (is_array($data)) {
             foreach ($data as &$value) {
                 if (!is_array($value) && !is_object($value)) {
@@ -133,17 +141,20 @@ class Util extends \Windward\Core\Base {
 
     /**
      * 格式化时间
-     * 
+     *
      * 当天的返回时间
      * 七天内返回天
      * 一月内返回周
      * 返回月
-     * 
+     *
      * @param int|string $time 时间
      * @return string
      */
-    public static function formatTimeAgo($time) {
-        if (!is_int($time)) {
+    public static function formatTimeAgo($time)
+    {
+        if ($time == '0000-00-00 00:00:00' || $time == '0000-00-00') {
+            return '';
+        } elseif (!is_numeric($time)) {
             $time = strtotime($time);
         }
         $now = time();
@@ -163,5 +174,4 @@ class Util extends \Windward\Core\Base {
         }
         return floor($diff / 2592000.0) . '月前';
     }
-
 }
