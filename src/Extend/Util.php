@@ -152,10 +152,10 @@ class Util extends \Windward\Core\Base
      */
     public static function formatTimeAgo($time)
     {
-        if (!is_int($time)) {
-            $time = strtotime($time);
-        } elseif ($time == '0000-00-00 00:00:00' || $time == '0000-00-00') {
+        if ($time == '0000-00-00 00:00:00' || $time == '0000-00-00') {
             return '';
+        } elseif (!is_numeric($time)) {
+            $time = strtotime($time);
         }
         $now = time();
 
