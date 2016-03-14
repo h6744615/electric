@@ -5,30 +5,40 @@ namespace Windward\Mvc\Controller;
 use Windward\Core\Response\Json as JsonResponse;
 use Windward\Core\Response\Plain as PlainResponse;
 
-Class Rest extends \Windward\Mvc\Controller {
+class Rest extends \Windward\Mvc\Controller
+{
     
     private $output;
     
-    public function afterHandle() {
+    public function afterHandle()
+    {
         if ($this->logger) {
-            $this->logger->log('api', 
-                'URL:',$this->request->getServer('REQUEST_URI'),
-                'Header:',$this->httpHeaders(),
-                'Post:',$this->request->getPost(),
-                'Output:',$this->getOutput()
+            $this->logger->log(
+                'api',
+                'URL:',
+                $this->request->getServer('REQUEST_URI'),
+                'Header:',
+                $this->httpHeaders(),
+                'Post:',
+                $this->request->getPost(),
+                'Output:',
+                $this->getOutput()
             );
         }
     }
     
-    public function setOutput(&$output) {
+    public function setOutput(&$output)
+    {
         $this->output = $output;
     }
     
-    public function getOutput() {
+    public function getOutput()
+    {
         return $this->output;
     }
 
-    public function error($key, $className = null) {
+    public function error($key, $className = null)
+    {
         if (is_null($className)) {
             $className = (new \ReflectionClass($this))->getShortName();
         }
@@ -41,12 +51,14 @@ Class Rest extends \Windward\Mvc\Controller {
             'data' => new \stdClass,
             'need_relogin' => 0,
         );
+        \Windward\Extend\Util::stringValues($result);
         $this->setOutput($result);
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
 
-    public function halt($key, $needLogin = 1, $className = null) {
+    public function halt($key, $needLogin = 1, $className = null)
+    {
         if (is_null($className)) {
             $className = (new \ReflectionClass($this))->getShortName();
         }
@@ -59,6 +71,7 @@ Class Rest extends \Windward\Mvc\Controller {
             'data' => new \stdClass,
             'need_relogin' => $needLogin,
         );
+        \Windward\Extend\Util::stringValues($result);
         $this->setOutput($result);
         $response = new JsonResponse($this->container);
         $response->setPayload($result);
@@ -66,7 +79,8 @@ Class Rest extends \Windward\Mvc\Controller {
         die();
     }
 
-    public function success($data = null, $key = null,$className = null,$needLogin = 0) {
+    public function success($data = null, $key = null, $className = null, $needLogin = 0)
+    {
         $info = array();
         if ($key) {
             if (is_null($className)) {
@@ -89,13 +103,15 @@ Class Rest extends \Windward\Mvc\Controller {
         return $response->setPayload($result);
     }
 
-    public function plainSuccess($content) {
+    public function plainSuccess($content)
+    {
         $response = new PlainResponse($this->container);
         $response->setContentType(PlainResponse::CONTENT_TYPE_JSON);
         return $response->setContent($content);
     }
 
-    public function httpHeaders() {
+    public function httpHeaders()
+    {
         $header = array(
             'APP_VERSION' => $this->request->getServer('HTTP_APP_VERSION'),
             'DEVICE_UUID' => $this->request->getServer('HTTP_DEVICE_UUID'),
@@ -108,7 +124,8 @@ Class Rest extends \Windward\Mvc\Controller {
         return $header;
     }
 
-    public function error404Action() {
+    public function error404Action()
+    {
         $json = new \Windward\Core\Response\Json($this->container);
         $json->setPayload(array(
             'status' => '1',
@@ -119,5 +136,4 @@ Class Rest extends \Windward\Mvc\Controller {
         ));
         $json->output();
     }
-
 }
