@@ -22,7 +22,7 @@ class Request
         if ($this->isPost()) {
             $contenttype = strtolower($_SERVER['CONTENT_TYPE']);
             if (preg_match('/^application\/json/',$contenttype)) {
-                $this->post = json_decode(file_get_contents('php://input'), true);
+                $this->post = (array)json_decode(file_get_contents('php://input'), true);
             } else {
                 $this->post = $_POST;
             }
