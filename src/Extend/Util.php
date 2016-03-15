@@ -158,20 +158,15 @@ class Util extends \Windward\Core\Base
             $time = strtotime($time);
         }
         $now = time();
-
         $date = date('Y-m-d', $time);
         $today = date('Y-m-d', $now);
         if ($date == $today) {
-            return date('H:i', $time);
+            return date('Y-n-j', $time);
         }
-        $diff = $now - $time;
-        if ($diff < 604800) {
-            return floor($diff / 86400.0) . '天前';
+        $diff = date_diff(new \DateTime($date), new \DateTime($today));
+        if ($diff->days < 30) {
+            return $diff->days . '天前';
         }
-        $diff = $now - $time;
-        if ($diff < 2592000) {
-            return floor($diff / 604800.0) . '周前';
-        }
-        return floor($diff / 2592000.0) . '月前';
+        return round($diff->days / 30.0) . '月前';
     }
 }
