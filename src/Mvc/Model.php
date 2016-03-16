@@ -340,6 +340,7 @@ class Model extends \Windward\Core\Base
             return array(
                 'total_page' => 0,
                 'current_page' => 0,
+                'perpage' => $limit,
                 'total_items' => 0,
                 'items' => array(),
             );
@@ -349,6 +350,7 @@ class Model extends \Windward\Core\Base
         return array(
             'total_page' => $totalPage,
             'current_page' => $curpage,
+            'perpage' => $limit,
             'total_items' => $totalItems,
             'items' => $items,
         );
