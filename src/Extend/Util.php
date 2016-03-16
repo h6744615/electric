@@ -174,4 +174,17 @@ class Util extends \Windward\Core\Base
         }
         return floor($diff / 2592000.0) . '月前';
     }
+    
+    public static function getThumbUrl($fileUrl,$w = 100, $h = 100) {
+        if (!preg_match('/\.(png|jpeg|jpg|gif)$/i', $fileUrl)) {
+            return $fileUrl;
+        }
+        
+        if (preg_match('/\.(png|jpeg|jpg|gif)$/i', $fileUrl,$match) && !preg_match('/\_w[\d]+h[\d]+/i',$fileUrl)) {
+            $ext = $match[1];
+            print_r($match);
+            return $fileUrl . "_w{$w}h{$h}.{$ext}";
+        }
+        return $fileUrl;
+    }
 }
