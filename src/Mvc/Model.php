@@ -311,7 +311,7 @@ class Model extends \Windward\Core\Base
         return true;
     }
 
-    public function paginate($sql, $curpage = 1, $limit = 20, $cond = null)
+    public function paginate($sql, $curpage = 1, $limit = 20, $cond = null,$countSql = '')
     {
         $curpage = (int) $curpage;
         $limit = (int) $limit;
@@ -326,11 +326,13 @@ class Model extends \Windward\Core\Base
             '${1}',
             $sql
         );
-        $countSql = preg_replace(
-            '/select.*?from(.*)/is',
-            'select count(*) as cnt from ${1}',
-            $selectSql
-        );
+        if (!$countSql) {
+            $countSql = preg_replace(
+                '/select.*?from(.*)/is',
+                'select count(*) as cnt from ${1}',
+                $selectSql
+            );
+        }
         $offset = ($curpage - 1) * $limit;
         $selectSql .= " limit {$offset},{$limit}";
 
