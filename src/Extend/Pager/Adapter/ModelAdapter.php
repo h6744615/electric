@@ -9,6 +9,7 @@ class ModelAdapter implements AdapterInterface
 {
 
     private $sql;
+    private $countSql;
     private $model;
     
     /**
@@ -16,7 +17,7 @@ class ModelAdapter implements AdapterInterface
      *
      * @param array $sql The sql.
      */
-    public function __construct(Model $model, $sql)
+    public function __construct(Model $model, $sql, $countSql = '')
     {
         $selectSql = preg_replace(
             '/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i', 
@@ -25,6 +26,7 @@ class ModelAdapter implements AdapterInterface
         );
         $this->model = $model;
         $this->sql = $selectSql;
+        $this->countSql = $countSql;
     }
 
     /**
@@ -32,11 +34,14 @@ class ModelAdapter implements AdapterInterface
      */
     public function getNbResults()
     {
-        $countSql = preg_replace(
-            '/select.*?from(.*)/is',
-            'select count(*) as cnt from ${1}', 
-            $this->sql
-        );
+        $countSql = $this->countSql;
+        if (!$countSql) {
+            $countSql = preg_replace(
+                '/select.*?from(.*)/is',
+                'select count(*) as cnt from ${1}', 
+                $this->sql
+            );
+        }
         $rs = $this->model->fetchOne($countSql);
         return $rs['cnt'];
     }
