@@ -2,36 +2,42 @@
 
 namespace Windward\Core;
 
-class Container {
+class Container
+{
 
     private $items;
     private $controllerSuffix = 'Controller';
     private $controllerNamespace = '';
     private $modelNamespace = '';
 
-    public function setControllerNamespace($namespace) {
+    public function setControllerNamespace($namespace)
+    {
         $this->controllerNamespace = rtrim($namespace, '\\');
     }
 
-    public function getControllerNamespace() {
+    public function getControllerNamespace()
+    {
         return $this->controllerNamespace;
     }
 
-    public function setModelNamespace($namespace) {
+    public function setModelNamespace($namespace)
+    {
         $this->modelNamespace = $namespace;
     }
 
-    public function getModelNamespace() {
+    public function getModelNamespace()
+    {
         return $this->modelNamespace;
     }
 
     /**
      * 注册依赖
-     * 
+     *
      * @param string $name
      * @param mixed|\Closure $value
      */
-    public function set($name, $value) {
+    public function set($name, $value)
+    {
         if ($value instanceof \Closure) {
             $this->items[$name] = $value();
         } else {
@@ -39,21 +45,24 @@ class Container {
         }
     }
 
-    public function get($name) {
+    public function get($name)
+    {
         return $this->items[$name];
     }
 
-    public function __get($name) {
+    public function __get($name)
+    {
         return $this->items[$name];
     }
 
     /**
      * 通过名称生成Controller对象并缓存
-     * 
+     *
      * @param string $name
      * @return \Windward\Core\Controller
      */
-    public function controller($name) {
+    public function controller($name)
+    {
         $name = $this->controllerNamespace . '\\' . ucfirst($name);
         if (isset($this->items[$name])) {
             return $this->items[$name];
@@ -68,11 +77,12 @@ class Container {
 
     /**
      * 通过名称生成Controller对象并缓存
-     * 
+     *
      * @param string $name
      * @return \Windward\Core\Controller
      */
-    public function model($name) {
+    public function model($name)
+    {
         $name = $this->modelNamespace . '\\' . $name;
         if (isset($this->items[$name])) {
             return $this->items[$name];
@@ -86,5 +96,4 @@ class Container {
         $this->items[$name] = $model;
         return $model;
     }
-
 }
