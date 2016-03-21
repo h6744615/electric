@@ -187,5 +187,31 @@ class Validator extends \Windward\Core\Base
         $regex = '/^[0-9a-z]{6,12}$/';
         return preg_match($regex, $data);
     }
+    
+    function isEarlyDate($date, $vars) {
+        $compareWithDate = $vars['compareWith'];
+        $compareModel = $vars['mode'];
+        $date = date("Y-m-d", strtotime($date));
+        $compareWithDate = date("Y-m-d", strtotime($compareWithDate));
+
+        if ($compareModel == 'le') {
+            return strtotime($date) <= strtotime($compareWithDate);
+        }
+
+        return strtotime($date) < strtotime($compareWithDate);
+    }
+    
+    function isLaterDate($date, $vars) {
+        $compareWithDate = $vars['compareWith'];
+        $compareModel = $vars['mode'];
+        $date = date("Y-m-d",strtotime($date));
+        $compareWithDate = date("Y-m-d",strtotime($compareWithDate));
+        
+        if ($compareModel == 'ge') {
+            return strtotime($date) >= strtotime($compareWithDate);
+        }
+        
+        return strtotime($date) > strtotime($compareWithDate);
+    }
 
 }
