@@ -12,7 +12,8 @@ use Windward\Core\Container;
 class Smarty extends \Windward\Core\Response {
 
     private $view;
-
+    private $tpl = '';
+    
     /**
      * 传入container
      * 
@@ -45,7 +46,12 @@ class Smarty extends \Windward\Core\Response {
             return $this->view->fetch();
         }
         header('Content-Type: text/html;charset=utf-8');
-        $this->view->display();
+        $this->view->display($this->tpl ? $this->tpl : null);
+        $this->tpl ? $this->setTpl() : null;
+    }
+    
+    public function setTpl($tpl = '') {
+        $this->tpl = $tpl;
     }
 
 }
