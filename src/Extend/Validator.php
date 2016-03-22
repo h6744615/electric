@@ -213,5 +213,51 @@ class Validator extends \Windward\Core\Base
         
         return strtotime($date) > strtotime($compareWithDate);
     }
+    
+    /*
+     * 验证身份证号码
+     */
+
+    function isIdNumber($idnumber) {
+        if (empty($idnumber)) {
+            return true;
+        }
+        $partten = '/^[\d]{6}((19[\d]{2})|(200[0-8]))((0[1-9])|(1[0-2]))((0[1-9])|([12][\d])|(3[01]))[\d]{3}[0-9xX]$/';
+        if (preg_match($partten, $idnumber)) {
+            $truenum = substr($idnumber, 0, 17);
+            $nsum = $truenum[0] * 7;
+            $nsum += $truenum[1] * 9;
+            $nsum += $truenum[2] * 10;
+            $nsum += $truenum[3] * 5;
+            $nsum += $truenum[4] * 8;
+            $nsum += $truenum[5] * 4;
+            $nsum += $truenum[6] * 2;
+            $nsum += $truenum[7] * 1;
+            $nsum += $truenum[8] * 6;
+            $nsum += $truenum[9] * 3;
+            $nsum += $truenum[10] * 7;
+            $nsum += $truenum[11] * 9;
+            $nsum += $truenum[12] * 10;
+            $nsum += $truenum[13] * 5;
+            $nsum += $truenum[14] * 8;
+            $nsum += $truenum[15] * 4;
+            $nsum += $truenum[16] * 2;
+            $yzm = 12 - $nsum % 11;
+            if ($yzm == 10) {
+                $yzm = 'x';
+            } else if ($yzm == 12) {
+                $yzm = '1';
+            } else if ($yzm == 11) {
+                $yzm = '0';
+            }
+            if (strtolower($idnumber[17]) == $yzm) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
 }
