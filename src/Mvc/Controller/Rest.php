@@ -47,7 +47,7 @@ class Rest extends \Windward\Mvc\Controller
         $result = array(
             'status' => '0',
             'code' => $error['code'],
-            'msg' => $error['msg'],
+            'msg' => $error['msg'] ?: $key,
             'data' => new \stdClass,
             'need_relogin' => 0,
         );
@@ -67,7 +67,7 @@ class Rest extends \Windward\Mvc\Controller
         $result = array(
             'status' => '0',
             'code' => $error['code'],
-            'msg' => $error['msg'],
+            'msg' => $error['msg'] ?: $key,
             'data' => new \stdClass,
             'need_relogin' => $needLogin,
         );
