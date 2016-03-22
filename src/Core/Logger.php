@@ -2,7 +2,8 @@
 
 namespace Windward\Core;
 
-class Logger extends Base {
+class Logger extends Base
+{
 
     private $fileExtension = '.log';
     private $filePermission = 0777;
@@ -12,17 +13,20 @@ class Logger extends Base {
     private $fileResources = [];
     private $dateFormat = 'Y-m-d';
 
-    public function __construct(Container $container, $baseDir) {
+    public function __construct(Container $container, $baseDir)
+    {
         parent::__construct($container);
         $this->baseDir = $baseDir;
     }
 
-    public function getFileName($type) {
+    public function getFileName($type)
+    {
         return $this->baseDir . DIRECTORY_SEPARATOR . date($this->dateFormat)
                 . DIRECTORY_SEPARATOR . $type . $this->fileExtension;
     }
 
-    public function getFileResource($type) {
+    public function getFileResource($type)
+    {
         $today = date($this->dateFormat);
         $file = $this->getFileName($type);
         if (!isset($this->currentDay[$type]) || $today !== $this->currentDay[$type]) {
@@ -43,7 +47,8 @@ class Logger extends Base {
         return $this->fileResources[$type];
     }
 
-    function log() {
+    function log()
+    {
         $args = func_get_args();
         $type = array_shift($args);
         $fileResource = $this->getFileResource($type);
@@ -59,9 +64,13 @@ class Logger extends Base {
             if (is_string($arg)) {
                 fwrite($fileResource, preg_replace('# +#', ' ', $arg));
             } else {
-                fwrite($fileResource,
-                       json_encode($arg,
-                                   JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+                fwrite(
+                    $fileResource,
+                    json_encode(
+                        $arg,
+                        JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+                    )
+                );
             }
             fwrite($fileResource, $this->endOfLine);
         }
@@ -71,14 +80,12 @@ class Logger extends Base {
         flock($fileResource, LOCK_UN);
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
         foreach ($this->fileResources as $fileResource) {
             if ($fileResource && is_resource($fileResource)) {
                 fclose($fileResource);
             }
         }
     }
-
 }
-
-?>
