@@ -181,4 +181,32 @@ class Util extends \Windward\Core\Base
         }
         return $fileUrl;
     }
+    
+    public static function getConvertedArrayValue(&$data, $key = '', $retType = 'int') {
+        if (!$data || !is_array($data)) {
+            return array();
+        }
+        
+        return array_map(function(&$item) use($key,$retType) {
+            $ret = null;
+            switch ($retType) {
+                case 'int':
+                    $ret = (int) $item[$key];
+                    break;
+                case 'float':
+                    $ret = (float) $item[$key];
+                    break;
+                case 'array':
+                    $ret = (array) $item[$key];
+                    break;
+                case 'string':
+                default:
+                    $ret = (string) $item[$key];
+                    break;
+            }
+
+            return $ret;
+        }, $data);
+    }
+
 }
