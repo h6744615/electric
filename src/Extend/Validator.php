@@ -214,6 +214,32 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) > strtotime($compareWithDate);
     }
     
+    function isEarlyDatetime($date, $vars) {
+        $compareWithDate = $vars['compareWith'];
+        $compareModel = $vars['mode'];
+        $date = date("Y-m-d H:i:s", strtotime($date));
+        $compareWithDate = date("Y-m-d H:i:s", strtotime($compareWithDate));
+
+        if ($compareModel == 'le') {
+            return strtotime($date) <= strtotime($compareWithDate);
+        }
+
+        return strtotime($date) < strtotime($compareWithDate);
+    }
+    
+    function isLaterDatetime($date, $vars) {
+        $compareWithDate = $vars['compareWith'];
+        $compareModel = $vars['mode'];
+        $date = date("Y-m-d H:i:s",strtotime($date));
+        $compareWithDate = date("Y-m-d H:i:s",strtotime($compareWithDate));
+        
+        if ($compareModel == 'ge') {
+            return strtotime($date) >= strtotime($compareWithDate);
+        }
+        
+        return strtotime($date) > strtotime($compareWithDate);
+    }
+    
     /*
      * 验证身份证号码
      */
