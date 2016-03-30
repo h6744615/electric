@@ -102,6 +102,11 @@ class Model extends \Windward\Core\Base
                 $sql .= " and {$key} != " . $val;
                 continue;
             }
+            if (preg_match('/^\[<=\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= " and {$key} <= " . $val;
+                continue;
+            }
             if (preg_match('/^\[in\]/', $key)) {
                 $key = substr($key, 4);
                 if (is_array($val)) {
@@ -301,13 +306,12 @@ class Model extends \Windward\Core\Base
 
         $sql = rtrim($sql, ',');
         if ($this->logging && $this->logger) {
-            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
+            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $vals);
         }
         $stmt = $this->pdo->prepare($sql);
         if ($stmt->execute($vals) === false) {
             return false;
         }
-
         return true;
     }
 
