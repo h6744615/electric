@@ -86,14 +86,14 @@ class Rest extends \Windward\Mvc\Controller
             if (is_null($className)) {
                 $className = (new \ReflectionClass($this))->getShortName();
             }
-            $key = 'controller.' . strtolower($className) . '.' . $key;
-            $info = $this->getLanguage()->info($key);
+            $iKey = 'controller.' . strtolower($className) . '.' . $key;
+            $info = $this->getLanguage()->info($iKey);
         }
         
         $result = array(
             'status' => '1',
             'code' => 0,
-            'msg' => isset($info['msg']) ? $info['msg'] : '',
+            'msg' => isset($info['msg']) ? $info['msg'] : $key,
             'data' => $data ? $data : new \stdClass(),
             'need_relogin' => $needLogin,
         );
