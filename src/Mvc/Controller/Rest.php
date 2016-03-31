@@ -42,8 +42,14 @@ class Rest extends \Windward\Mvc\Controller
         if (is_null($className)) {
             $className = (new \ReflectionClass($this))->getShortName();
         }
-        $key = 'controller.' . strtolower($className) . '.' . $key;
-        $error = $this->getLanguage()->error($key);
+        $error = array();
+        if ($key) {
+            if (is_null($className)) {
+                $className = (new \ReflectionClass($this))->getShortName();
+            }
+            $iKey = 'controller.' . strtolower($className) . '.' . $key;
+            $error = $this->getLanguage()->error($iKey);
+        }
         $result = array(
             'status' => '0',
             'code' => $error['code'],
@@ -59,11 +65,14 @@ class Rest extends \Windward\Mvc\Controller
 
     public function halt($key, $needLogin = 1, $className = null)
     {
-        if (is_null($className)) {
-            $className = (new \ReflectionClass($this))->getShortName();
+        $error = array();
+        if ($key) {
+            if (is_null($className)) {
+                $className = (new \ReflectionClass($this))->getShortName();
+            }
+            $iKey = 'controller.' . strtolower($className) . '.' . $key;
+            $error = $this->getLanguage()->error($iKey);
         }
-        $key = 'controller.' . strtolower($className) . '.' . $key;
-        $error = $this->getLanguage()->error($key);
         $result = array(
             'status' => '0',
             'code' => $error['code'],
