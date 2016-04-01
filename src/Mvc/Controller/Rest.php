@@ -85,6 +85,7 @@ class Rest extends \Windward\Mvc\Controller
         $response = new JsonResponse($this->container);
         $response->setPayload($result);
         $response->output();
+        $this->afterHandle();
         die();
     }
 

@@ -33,11 +33,13 @@ class Curl extends \Windward\Core\Base
         $this->files[$filename] = new \CURLFile($file);
     }
     
-    public function request($json = false)
+    public function request($json = false, $return = true)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        if ($return) {
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        }
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         if ($json) {
