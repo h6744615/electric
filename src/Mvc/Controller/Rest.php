@@ -117,6 +117,7 @@ class Rest extends \Windward\Mvc\Controller
     {
         $response = new PlainResponse($this->container);
         $response->setContentType(PlainResponse::CONTENT_TYPE_JSON);
+        $this->setOutput(json_decode($content, true));
         return $response->setContent($content);
     }
 
