@@ -87,10 +87,11 @@ class Validator extends \Windward\Core\Base
             }
 
             if (method_exists($this, $func)) {
+                /*
                 if ($func != 'isNotNull' && strlen($this->data[$field]) == 0) {
                     continue;
                 }
-
+                */
                 if (!$this->$func($this->data[$field], $vars)) {
                     $this->setError($field, $error);
                     break;
