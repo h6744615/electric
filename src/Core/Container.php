@@ -78,10 +78,11 @@ class Container
     /**
      * 通过名称生成Controller对象并缓存
      *
-     * @param string $name
+     * @param string $name  model名称
+     * @param string $connectionName  连接名称
      * @return \Windward\Core\Controller
      */
-    public function model($name)
+    public function model($name, $connectionName = 'connection')
     {
         $name = $this->modelNamespace . '\\' . $name;
         if (isset($this->items[$name])) {
@@ -92,7 +93,8 @@ class Container
         }
         $model = new $name($this);
         //$model->setDbConnection($this->database);
-        $model->setPdo($this->connection);
+        $connection = $this->{$connectionName};
+        $model->setPdo($connection);
         $this->items[$name] = $model;
         return $model;
     }
