@@ -11,13 +11,18 @@ class ModelAdapter implements AdapterInterface
     private $sql;
     private $countSql;
     private $model;
+    private $resultParams = null;
+    private $countParams = null;
     
     /**
      * Constructor.
      *
-     * @param array $sql The sql.
+     * @param string $sql 结果SQL.
+     * @param string $countSql 总数SQL.
+     * @param string $resultParams 结果绑定参数.
+     * @param string $countParams 总数绑定参数.
      */
-    public function __construct(Model $model, $sql, $countSql = '')
+    public function __construct(Model $model, $sql, $countSql = '', array $resultParams = null, array $countParams = null)
     {
         $selectSql = preg_replace(
             '/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i', 
@@ -27,6 +32,8 @@ class ModelAdapter implements AdapterInterface
         $this->model = $model;
         $this->sql = $selectSql;
         $this->countSql = $countSql;
+        $this->resultParams = $resultParams;
+        $this->countParams = $countParams;
     }
 
     /**
@@ -42,7 +49,7 @@ class ModelAdapter implements AdapterInterface
                 $this->sql
             );
         }
-        $rs = $this->model->fetchOne($countSql);
+        $rs = $this->model->fetchOne($countSql, $this->countParams ?: $this->resultParams);
         return $rs['cnt'];
     }
 
@@ -53,7 +60,7 @@ class ModelAdapter implements AdapterInterface
     {
         $offset = (int)$offset;
         $length = (int)$length;
-        return$this->model->fetchAll($this->sql . ' LIMIT ' . $offset . ', ' . $length);
+        return$this->model->fetchAll($this->sql . ' LIMIT ' . $offset . ', ' . $length, $this->resultParams);
     }
 
 }
