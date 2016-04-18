@@ -27,7 +27,7 @@ class Rest extends \Windward\Mvc\Controller
         }
     }
     
-    public function setOutput(&$output)
+    public function setOutput($output)
     {
         $this->output = $output;
     }

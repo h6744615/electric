@@ -63,6 +63,7 @@ class Uploader extends \Windward\Core\Base {
     
     public function getSavePath($rules, $post, $key)
     {
+        $date = date('Y/m/d');
         if (isset($post['prefix']) && $post['prefix'] && is_array($post['prefix'])) {
             foreach ($post['prefix'] as $one => $value) {
                 if (!preg_match('#^([a-zA-z0-1_*]+)$#', $one)) {
@@ -70,12 +71,12 @@ class Uploader extends \Windward\Core\Base {
                 }
                 $one = str_replace('*', '.*', $one);
                 if (preg_match("#^{$one}$#", $key)) {
-                    return $value;
+                    return $value . DIRECTORY_SEPARATOR . $date . DIRECTORY_SEPARATOR;
                 }
             }
         }
         if (isset($rules['savePath'])) {
-            return $rules['savePath'];
+            return $rules['savePath'] . DIRECTORY_SEPARATOR . $date . DIRECTORY_SEPARATOR;
         }
         return date('Y/m/d');
     }
@@ -122,6 +123,12 @@ class Uploader extends \Windward\Core\Base {
 
     public function generateThubm($file, $thumb, $name = null, $output = false)
     {
+        if ($thumb['w'] > 2048) {
+            $thumb['w'] = 2048;
+        }
+        if ($thumb['h'] > 2048) {
+            $thumb['h'] = 2048;
+        }
         $pathInfo = pathinfo($file);
         $thumbName = $file . '_';
         if (is_null($name)) {
@@ -138,18 +145,21 @@ class Uploader extends \Windward\Core\Base {
         } else {
             $thumbName .= $name;
         }
-        $img = ImageManagerStatic::make($file);
-        /*
-        $img->resize($thumb['w'], $thumb['h'], function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($thumbName . '.' . $pathInfo['extension']);
-         */
-        $img->crop($thumb['w'], $thumb['h'])->save($thumbName . '.' . $pathInfo['extension']);
+        $thumbName .= '.' . $pathInfo['extension'];
+
         if ($output) {
-            // send HTTP header and output image data
-            header('Content-Type: image/png');
-            exit($img->encode($pathInfo['extension']));
+            header('Content-Type: */*');
+            if (!file_exists($thumbName)) {
+                $img = ImageManagerStatic::make($file);
+                $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+                exit($img->encode($pathInfo['extension']));
+            }
+            $fp = fopen($thumbName, 'rb');
+            fpassthru($fp);
+            exit;
         }
+        $img = ImageManagerStatic::make($file);
+        $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
     }
 
     public function getDestName($name)
@@ -231,7 +241,7 @@ class Uploader extends \Windward\Core\Base {
             for ($i = 0; $i < $count; $i++) {
                 $thumb[$m[1][$i]] = $m[2][$i];
             }
-            $file = preg_replace('#_(?:([w|h]\d+){1,2}.(png|jpg|jpeg))#i', '', $this->basePath . $file);
+            $file = preg_replace('#_(?:([w|h]\d+){1,2}.?(png|jpg|jpeg)?)#i', '', $this->basePath . $file);
         }
         $this->generateThubm($file, $thumb, $name, true);   
     }
