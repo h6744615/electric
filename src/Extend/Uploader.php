@@ -150,6 +150,7 @@ class Uploader extends \Windward\Core\Base {
             }
             $fp = fopen($thumbName, 'rb');
             fpassthru($fp);
+            exit;
         }
         $img = ImageManagerStatic::make($file);
         $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
