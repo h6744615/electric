@@ -123,6 +123,12 @@ class Uploader extends \Windward\Core\Base {
 
     public function generateThubm($file, $thumb, $name = null, $output = false)
     {
+        if ($thumb['w'] > 2048) {
+            $thumb['w'] = 2048;
+        }
+        if ($thumb['h'] > 2048) {
+            $thumb['h'] = 2048;
+        }
         $pathInfo = pathinfo($file);
         $thumbName = $file . '_';
         if (is_null($name)) {
