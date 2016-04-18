@@ -21,6 +21,8 @@ class Rest extends \Windward\Mvc\Controller
                 $this->httpHeaders(),
                 'Post:',
                 $this->request->getPost(),
+                'Files:',
+                $_FILES,
                 'Output:',
                 $this->getOutput()
             );
