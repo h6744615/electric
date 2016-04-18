@@ -75,12 +75,15 @@ class Router extends Base {
         $method = $request->getMethod();
         $controllerName = $this->defaultController;
         $actionName = $this->defaultAction;
-
+        
         if (!isset($this->routes[$method])) {
             goto end_loop;
         }
+        
+        if (!$uri || $uri == '/') {
+            $uri = '/' . $this->defaultController . '/' . $this->defaultAction;
+        }
         $activeRoutes = $this->routes[$method];
-
         foreach ($activeRoutes as $route) {
             if ($route->test($uri)) {
                 $this->activeRoute = $route;
@@ -100,7 +103,7 @@ class Router extends Base {
 
         $controller = $this->container->controller($controllerName);
         $actionName .= $this->actionSuffix;
-
+        
         end_loop:
         if (isset($controller) && $actionName && is_callable(array($controller, $actionName))) {
             if (is_callable(array($controller, 'beforeHandle'))) {
@@ -146,5 +149,10 @@ class Router extends Base {
     public function getActiveRoute()
     {
         return $this->activeRoute;
+    }
+    
+    public function setDefault($c = '',$a = '') {
+        $c ? $this->defaultController = $c : null;
+        $a ? $this->defaultAction = $a : null;
     }
 }
