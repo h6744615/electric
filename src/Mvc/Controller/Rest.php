@@ -132,6 +132,7 @@ class Rest extends \Windward\Mvc\Controller
             'DEVICE_VERSION' => $this->request->getServer('HTTP_DEVICE_VERSION'),
             'DEVICE_TOKEN' => $this->request->getServer('HTTP_DEVICE_TOKEN'),
             'APP_TOKEN' => $this->request->getServer('HTTP_APP_TOKEN'),
+            'CONTENT_TYPE' => $this->request->getServer('HTTP_CONTENT_TYPE'),
         );
 
         return $header;
