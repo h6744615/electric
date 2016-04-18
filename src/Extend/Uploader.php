@@ -144,7 +144,7 @@ class Uploader extends \Windward\Core\Base {
             $constraint->aspectRatio();
         })->save($thumbName . '.' . $pathInfo['extension']);
          */
-        $img->crop($thumb['w'], $thumb['h'])->save($thumbName . '.' . $pathInfo['extension']);
+        $img->fit($thumb['w'], $thumb['h'])->save($thumbName . '.' . $pathInfo['extension']);
         if ($output) {
             // send HTTP header and output image data
             header('Content-Type: image/png');
@@ -231,7 +231,7 @@ class Uploader extends \Windward\Core\Base {
             for ($i = 0; $i < $count; $i++) {
                 $thumb[$m[1][$i]] = $m[2][$i];
             }
-            $file = preg_replace('#_(?:([w|h]\d+){1,2}.(png|jpg|jpeg))#i', '', $this->basePath . $file);
+            $file = preg_replace('#_(?:([w|h]\d+){1,2}.?(png|jpg|jpeg)?)#i', '', $this->basePath . $file);
         }
         $this->generateThubm($file, $thumb, $name, true);   
     }

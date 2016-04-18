@@ -103,7 +103,7 @@ class Model extends \Windward\Core\Base
                 continue;
             }
             if (preg_match('/^\[<=\]/', $key)) {
-                $key = substr($key, 4);
+                $key = substr($key, 5);
                 $sql .= " and {$key} <= " . $val;
                 continue;
             }
