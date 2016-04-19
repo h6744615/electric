@@ -125,11 +125,14 @@ class Rest extends \Windward\Mvc\Controller
 
     public function httpHeaders()
     {
-        $headers = $this->request->getServer();
-        foreach ($headers as $key => $value) {
+        $servers = $this->request->getServer();
+        $headers = [];
+        foreach ($servers as $key => $value) {
             if (strpos($key, 'HTTP_') === false) {
-                unset($headers[$key]);
+                unset($servers[$key]);
+                continue;
             }
+            $headers[str_replace('HTTP_', '', $key)] = $value;
         }
         return $headers;
     }
