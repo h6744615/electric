@@ -125,17 +125,13 @@ class Rest extends \Windward\Mvc\Controller
 
     public function httpHeaders()
     {
-        $header = array(
-            'APP_VERSION' => $this->request->getServer('HTTP_APP_VERSION'),
-            'DEVICE_UUID' => $this->request->getServer('HTTP_DEVICE_UUID'),
-            'DEVICE_MODEL' => $this->request->getServer('HTTP_DEVICE_MODEL'),
-            'DEVICE_VERSION' => $this->request->getServer('HTTP_DEVICE_VERSION'),
-            'DEVICE_TOKEN' => $this->request->getServer('HTTP_DEVICE_TOKEN'),
-            'APP_TOKEN' => $this->request->getServer('HTTP_APP_TOKEN'),
-            'CONTENT_TYPE' => $this->request->getServer('HTTP_CONTENT_TYPE'),
-        );
-
-        return $header;
+        $headers = $this->request->getServer();
+        foreach ($headers as $key => $value) {
+            if (strpos($key, 'HTTP_') === false) {
+                unset($headers[$key]);
+            }
+        }
+        return $headers;
     }
 
     public function error404Action()

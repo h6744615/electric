@@ -146,20 +146,25 @@ class Uploader extends \Windward\Core\Base {
             $thumbName .= $name;
         }
         $thumbName .= '.' . $pathInfo['extension'];
-
-        if ($output) {
-            header('Content-Type: */*');
-            if (!file_exists($thumbName)) {
-                $img = ImageManagerStatic::make($file);
-                $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
-                exit($img->encode($pathInfo['extension']));
+        try {
+            if ($output) {
+                header('Content-Type: */*');
+                if (!file_exists($thumbName)) {
+                    $img = ImageManagerStatic::make($file);
+                    $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+                    exit($img->encode($pathInfo['extension']));
+                }
+                $fp = fopen($thumbName, 'rb');
+                fpassthru($fp);
+                exit;
             }
-            $fp = fopen($thumbName, 'rb');
-            fpassthru($fp);
-            exit;
-        }
-        $img = ImageManagerStatic::make($file);
-        $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+            $img = ImageManagerStatic::make($file);
+            $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+        } catch (Exception $e) {
+            if ($this->logger) {
+                $this->logger->log('api', 'Exception', $e);
+            }
+        }   
     }
 
     public function getDestName($name)
