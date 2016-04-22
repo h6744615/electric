@@ -241,7 +241,7 @@ class Uploader extends \Windward\Core\Base {
         }
         if ($flg) {
             if (($count = preg_match_all('#([w|h])(\d+)#i', $file, $m)) == 0) {
-                $fp = fopen($file, 'rb');
+                $fp = fopen($this->basePath . $file, 'rb');
                 fpassthru($fp);
                 exit;
             }
