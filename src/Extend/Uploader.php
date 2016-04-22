@@ -241,7 +241,9 @@ class Uploader extends \Windward\Core\Base {
         }
         if ($flg) {
             if (($count = preg_match_all('#([w|h])(\d+)#i', $file, $m)) == 0) {
-                return false;
+                $fp = fopen($file, 'rb');
+                fpassthru($fp);
+                exit;
             }
             for ($i = 0; $i < $count; $i++) {
                 $thumb[$m[1][$i]] = $m[2][$i];
