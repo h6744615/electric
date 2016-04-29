@@ -24,7 +24,8 @@
         "psr-4": {
             "Windward\\": "src/",
             "Windward\\Tests\\": "tests/src"
-        }
+        },
+        "files": ["src/functions.php"]
     },
     "license": "PRIVETE"
 }

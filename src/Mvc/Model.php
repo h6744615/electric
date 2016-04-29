@@ -107,6 +107,12 @@ class Model extends \Windward\Core\Base
                 $sql .= " and {$key} <= " . $val;
                 continue;
             }
+            if (preg_match('/^\[lk\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= " and {$key} like :cond_{$key}";
+                $params["cond_{$key}"] = $val;
+                continue;
+            }
             if (preg_match('/^\[in\]/', $key)) {
                 $key = substr($key, 4);
                 if (is_array($val)) {
