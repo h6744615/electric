@@ -96,11 +96,12 @@ class Uploader extends \Windward\Core\Base {
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $destName = str_replace('//', '/', $savePath . '/' . $this->getDestName($file['name']));
+        $destName = str_replace('//', '/', $savePath . '/' . $this->getDestName($file));
         $destFileName = $this->basePath . $destName;
         move_uploaded_file($file['tmp_name'], $destFileName);
         if (!file_exists($destFileName)) {
             $file['error'] .= 'move error';
+            return false;
         }
         if (isset($rules['thumbs'])) {
             $this->generateThubms($destFileName, $rules['thumbs']);
@@ -146,26 +147,34 @@ class Uploader extends \Windward\Core\Base {
             $thumbName .= $name;
         }
         $thumbName .= '.' . $pathInfo['extension'];
-
-        if ($output) {
-            header('Content-Type: */*');
-            if (!file_exists($thumbName)) {
-                $img = ImageManagerStatic::make($file);
-                $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
-                exit($img->encode($pathInfo['extension']));
+        try {
+            if ($output) {
+                header('Content-Type: */*');
+                if (!file_exists($thumbName)) {
+                    $img = ImageManagerStatic::make($file);
+                    $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+                    exit($img->encode($pathInfo['extension']));
+                }
+                $fp = fopen($thumbName, 'rb');
+                fpassthru($fp);
+                exit;
             }
-            $fp = fopen($thumbName, 'rb');
-            fpassthru($fp);
-            exit;
-        }
-        $img = ImageManagerStatic::make($file);
-        $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+            $img = ImageManagerStatic::make($file);
+            $img->fit($thumb['w'], $thumb['h'])->save($thumbName);
+        } catch (Exception $e) {
+            if ($this->logger) {
+                $this->logger->log('api', 'Exception', $e);
+            }
+        }   
     }
 
-    public function getDestName($name)
+    public function getDestName($file)
     {
-        $ext = pathinfo($name, PATHINFO_EXTENSION);
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
         $name = uniqid('upload_');
+        $image = ImageManagerStatic::make($file['tmp_name']);
+        $name .= '_w' . $image->width();
+        $name .= 'h' . $image->height();
         return $name . '.' . $ext;
     }
 
@@ -235,13 +244,19 @@ class Uploader extends \Windward\Core\Base {
             }
         }
         if ($flg) {
-            if (($count = preg_match_all('#([w|h])(\d+)#i', $file, $m)) == 0) {
-                return false;
+            if (($count = preg_match('#\.(?:png|jpg|jpeg)_(w?)(\d*)(h?)(\d*)#i', $file, $m)) == 0) {
+                header('Content-Type: */*');
+                $fp = fopen($this->basePath . $file, 'rb');
+                fpassthru($fp);
+                exit;
             }
-            for ($i = 0; $i < $count; $i++) {
-                $thumb[$m[1][$i]] = $m[2][$i];
+            if ($m[1] && $m[2]) {
+                $thumb[$m[1]] = $m[2];
             }
-            $file = preg_replace('#_(?:([w|h]\d+){1,2}.?(png|jpg|jpeg)?)#i', '', $this->basePath . $file);
+            if ($m[3] && $m[4]) {
+                $thumb[$m[3]] = $m[4];
+            }
+            $file = preg_replace('#_(?:([w|h]\d+){1,2}.?(png|jpg|jpeg)?)$#i', '', $this->basePath . $file);
         }
         $this->generateThubm($file, $thumb, $name, true);   
     }

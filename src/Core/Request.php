@@ -66,8 +66,11 @@ class Request
         
     }
 
-    public function getServer($key)
+    public function getServer($key = null)
     {
+        if (is_null($key)) {
+            return filter_input_array(INPUT_SERVER);
+        }
         return filter_input(INPUT_SERVER, $key, FILTER_SANITIZE_STRING);
     }
 
