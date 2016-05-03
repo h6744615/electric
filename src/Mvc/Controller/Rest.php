@@ -147,4 +147,30 @@ class Rest extends \Windward\Mvc\Controller
         ));
         $json->output();
     }
+    
+    
+    
+    /*
+     * 记录api访问日志到平台系统
+     */
+    public function logApi($platformUrl,$platformId)
+    {
+        if (!$this->request) {
+            return true;
+        }
+        
+        $curl = new \Windward\Lib\Curl($this->container);
+        $curl->setUrl($platformUrl . '/service/log');
+        
+        $post = array(
+            'platform' => $platformId,
+            'uri' => $this->request->getSchemaHost() . $this->request->getServer('REQUEST_URI'),
+            'get' => $this->request->getQuery(),
+            'post' => $this->request->getPost(),
+            'header' => $this->httpHeaders(),
+            'access_time' => time(),
+        );
+        $curl->setPostDatas($post);
+        $curl->request(true);
+    }
 }
