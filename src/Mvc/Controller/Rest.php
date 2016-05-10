@@ -41,6 +41,7 @@ class Rest extends \Windward\Mvc\Controller
 
     public function error($key, $className = null)
     {
+        $vars = array_slice(func_get_args(), 2);
         if (is_null($className)) {
             $className = (new \ReflectionClass($this))->getShortName();
         }
@@ -50,7 +51,7 @@ class Rest extends \Windward\Mvc\Controller
                 $className = (new \ReflectionClass($this))->getShortName();
             }
             $iKey = 'controller.' . strtolower($className) . '.' . $key;
-            $error = $this->getLanguage()->error($iKey);
+            $error = $this->getLanguage()->error($iKey,$vars);
         }
         $result = array(
             'status' => '0',

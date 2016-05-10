@@ -25,7 +25,7 @@ class Language
         }
     }
 
-    public function error($key)
+    public function error($key,$vars = array())
     {
         if (is_null($this->error)) {
             include self::$baseDir . $this->lang . '/' . 'error.php';
@@ -34,7 +34,13 @@ class Language
         if (!Util::issetArrayValue($this->error, $key)) {
             return null;
         }
-        return Util::getArrayValue($this->error, $key);
+        $error = Util::getArrayValue($this->error, $key);
+        if ($vars) {
+            foreach ($vars as $var) {
+                $error['msg'] = sprintf($error['msg'],$var);
+            }
+        }
+        return $error;
     }
 
     public function info($key)
