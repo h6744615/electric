@@ -52,7 +52,10 @@ class Container
 
     public function __get($name)
     {
-        return $this->items[$name];
+        if (isset($this->items[$name])) {
+            return $this->items[$name];
+        }
+        return null;
     }
 
     /**
