@@ -33,9 +33,9 @@ class Openssl extends \Windward\Core\Base
         $this->initKey('file://' . $privateKeyFile, $passphrase);
     }
 
-    public function initKeyByString($privateKeyFile, $passphrase = '')
+    public function initKeyByString($privateKeyString, $passphrase = '')
     {
-        $this->initKey($privateKeyFile, $passphrase);
+        $this->initKey($privateKeyString, $passphrase);
     }
 
     public function initKey($privateKeyFile = '', $passphrase = '')
