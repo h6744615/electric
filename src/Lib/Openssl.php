@@ -28,14 +28,24 @@ class Openssl extends \Windward\Core\Base
         $this->privateKey = $pk;
     }
 
-    public function initKeyByFile($privateKeyFile = '')
+    public function initKeyByFile($privateKeyFile, $passphrase = '')
+    {
+        $this->initKey('file://' . $privateKeyFile, $passphrase);
+    }
+
+    public function initKeyByString($privateKeyFile, $passphrase = '')
+    {
+        $this->initKey($privateKeyFile, $passphrase);
+    }
+
+    public function initKey($privateKeyFile = '', $passphrase = '')
     {
         if (!$privateKeyFile) {
             return false;
         }
         
         $privateKey = '';
-        $res = openssl_pkey_get_private("file://{$privateKeyFile}");
+        $res = openssl_pkey_get_private($privateKeyFile, $passphrase);
         openssl_pkey_export($res, $privateKey);
         $this->privateKey = $privateKey;
         
