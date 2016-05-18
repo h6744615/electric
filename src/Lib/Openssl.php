@@ -33,7 +33,8 @@ class Openssl extends \Windward\Core\Base
         if (!$file) {
             return false;
         }
-
+        
+        $privateKey = '';
         $res = openssl_pkey_get_private("file://{$file}");
         openssl_pkey_export($res, $privateKey);
         $this->privateKey = $privateKey;
@@ -49,7 +50,7 @@ class Openssl extends \Windward\Core\Base
         }
         $encrypt = '';
         openssl_public_encrypt($data, $encrypt, $publicKey);
-        return $encrypt;
+        return base64_encode($encrypt);
     }
 
     public function decrypt($data, $privateKey = '')
@@ -58,7 +59,7 @@ class Openssl extends \Windward\Core\Base
             $privateKey = $this->privateKey;
         }
         $decrypt = '';
-        openssl_private_decrypt($data, $decrypt, $privateKey);
+        openssl_private_decrypt(base64_decode($data), $decrypt, $privateKey);
         return $decrypt;
     }
 
