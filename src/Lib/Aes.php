@@ -2,14 +2,13 @@
 
 namespace Windward\Lib;
 
-class Aes extends \Windward\Core\Base
+class Aes
 {
 
     private $cipher;
     
-    public function __construct(\Windward\Core\Container $container)
+    public function __construct()
     {
-        parent::__construct($container);
         $this->cipher = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_CBC, '');
     }
 

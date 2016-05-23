@@ -8,6 +8,9 @@ class Request
 {
 
     private $post = array();
+    private $server = array();
+    private $query = array();
+
     private $normalizedUri;
 
     public static function build(Container $container)
@@ -19,6 +22,8 @@ class Request
 
     public function init()
     {
+        $this->query = $_GET;
+        $this->server = $_SERVER;
         if ($this->isPost()) {
             $contenttype = strtolower($_SERVER['CONTENT_TYPE']);
             if (preg_match('/^application\/json/',$contenttype)) {
@@ -29,13 +34,23 @@ class Request
         }
     }
 
+    public function setCustomData(array $customData)
+    {
+        foreach ($customData as $key => $value) {
+            $_SERVER['HTTP_' . strtoupper($key)] = $value;
+        }
+        $this->server = $_SERVER;
+        $this->post = isset($customData['post']) ? $customData['post'] : null;
+        $this->query = isset($customData['get']) ? $customData['get'] : null;
+    }
+
     public function getQuery($name = null, $default = null)
     {
         if (is_null($name)) {
-            return $_GET;
+            return $this->query;
         }
-        if (Util::issetArrayValue($_GET, $name)) {
-            return Util::getArrayValue($_GET, $name);
+        if (Util::issetArrayValue($this->query, $name)) {
+            return Util::getArrayValue($this->query, $name);
         }
         return $default;
     }
@@ -66,12 +81,15 @@ class Request
         
     }
 
-    public function getServer($key = null)
+    public function getServer($key = null, $default = '')
     {
         if (is_null($key)) {
-            return filter_input_array(INPUT_SERVER);
+            return $this->server;
         }
-        return filter_input(INPUT_SERVER, $key, FILTER_SANITIZE_STRING);
+        if (Util::issetArrayValue($this->server, $key)) {
+            return Util::getArrayValue($this->server, $key);
+        }
+        return $default;
     }
 
     public function isGet()

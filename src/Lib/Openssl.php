@@ -2,7 +2,7 @@
 
 namespace Windward\Lib;
 
-class Openssl extends \Windward\Core\Base
+class Openssl
 {
 
     private $publicKey = '';

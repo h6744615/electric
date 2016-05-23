@@ -10,7 +10,7 @@ class Rest extends \Windward\Mvc\Controller
     
     private $output;
     
-    public function afterHandle()
+    public function afterHandle(&$response)
     {
         if ($this->logger) {
             $this->logger->log(
@@ -24,19 +24,19 @@ class Rest extends \Windward\Mvc\Controller
                 'Files:',
                 $_FILES,
                 'Output:',
-                $this->getOutput()
+                $response->output(true)
             );
         }
     }
     
-    public function setOutput($output)
+    public function beforeHandle()
     {
-        $this->output = $output;
+
     }
-    
-    public function getOutput()
+
+    public function needEncrypt()
     {
-        return $this->output;
+        return true;
     }
 
     public function error($key, $className = null)
@@ -61,7 +61,6 @@ class Rest extends \Windward\Mvc\Controller
             'need_relogin' => 0,
         );
         \Windward\Extend\Util::stringValues($result);
-        $this->setOutput($result);
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
@@ -83,12 +82,9 @@ class Rest extends \Windward\Mvc\Controller
             'data' => new \stdClass,
             'need_relogin' => $needLogin,
         );
-        \Windward\Extend\Util::stringValues($result);
-        $this->setOutput($result);
         $response = new JsonResponse($this->container);
-        $response->setPayload($result);
         $response->output();
-        $this->afterHandle();
+        $this->afterHandle($response);
         die();
     }
 
@@ -110,8 +106,6 @@ class Rest extends \Windward\Mvc\Controller
             'data' => $data ? $data : new \stdClass(),
             'need_relogin' => $needLogin,
         );
-        \Windward\Extend\Util::stringValues($result);
-        $this->setOutput($result);
         $response = new JsonResponse($this->container);
         return $response->setPayload($result);
     }
@@ -120,7 +114,6 @@ class Rest extends \Windward\Mvc\Controller
     {
         $response = new PlainResponse($this->container);
         $response->setContentType(PlainResponse::CONTENT_TYPE_JSON);
-        $this->setOutput(json_decode($content));
         return $response->setContent($content);
     }
 

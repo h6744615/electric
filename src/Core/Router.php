@@ -70,8 +70,8 @@ class Router extends Base {
 
     public function handle($uri)
     {        
-        $this->addRoute(Http::METHOD_ANY, '/:controller/:action/:param_pairs');
         $request = Request::build($this->container);
+        $this->addRoute(Http::METHOD_ANY, '/:controller/:action/:param_pairs');
         $method = $request->getMethod();
         $controllerName = $this->defaultController;
         $actionName = $this->defaultAction;
@@ -111,7 +111,7 @@ class Router extends Base {
             }
             $response = call_user_func(array($controller, $actionName));
             if (is_callable(array($controller, 'afterHandle'))) {
-                call_user_func(array($controller, 'afterHandle'));
+                $controller->afterHandle($response);
             }
             if (is_a($response, 'Windward\Core\Response')) {
                 return $response->output();

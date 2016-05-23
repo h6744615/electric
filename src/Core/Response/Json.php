@@ -41,10 +41,16 @@ class Json extends \Windward\Core\Response {
      */
     public function setPayload($payload)
     {
+        \Windward\Extend\Util::stringValues($payload);
         $this->payload = $payload;
         return $this;
     }
     
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
     /**
      * 输出模板或返回模板内容
      * 
