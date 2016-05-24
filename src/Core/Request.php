@@ -36,8 +36,10 @@ class Request
 
     public function setCustomData(array $customData)
     {
-        foreach ($customData as $key => $value) {
-            $_SERVER['HTTP_' . strtoupper($key)] = $value;
+        if (isset($customData['header'])) {
+            foreach ($customData['header'] as $key => $value) {
+                $_SERVER['HTTP_' . strtoupper($key)] = $value;
+            }
         }
         $this->server = $_SERVER;
         $this->post = isset($customData['post']) ? $customData['post'] : null;
