@@ -83,6 +83,7 @@ class Rest extends \Windward\Mvc\Controller
             'need_relogin' => $needLogin,
         );
         $response = new JsonResponse($this->container);
+        $response->setPayload($result);
         $response->output();
         $this->afterHandle($response);
         die();
