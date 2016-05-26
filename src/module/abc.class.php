@@ -1,5 +1,6 @@
 <?php
 
-class abc extends Base {
+class abc extends Base
+{
     
 }

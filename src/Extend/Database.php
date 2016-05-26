@@ -2,23 +2,25 @@
 
 namespace Windward\Extend;
 
-class Database extends \medoo {
+class Database extends \medoo
+{
 
-    public function paginate($table, $column = '*', $where = null, $join = null, $curr = 1, $pagesize = 20) {
+    public function paginate($table, $column = '*', $where = null, $join = null, $curr = 1, $pagesize = 20)
+    {
         if (is_numeric($where)) {
             $curr = $where;
-            $where = NULL;
+            $where = null;
             if (is_numeric($join)) {
                 $pagesize = $join;
             }
-            $join = NULL;
+            $join = null;
         }
         if (is_numeric($join)) {
             $pagesize = $curr;
             $curr = $join;
-            $join = NULL;
+            $join = null;
         }
-        if(is_null($where)) {
+        if (is_null($where)) {
             $count = $this->count($table, '*');
         } else {
             $count = $this->count($table, $join, '*', $where);
@@ -38,7 +40,7 @@ class Database extends \medoo {
         $from = ($curr - 1) * $pagesize;
         $where['LIMIT'] = array($from, $pagesize);
         
-        if(is_null($join)) {
+        if (is_null($join)) {
             $items = $this->select($table, $column, $where);
 
         } else {
@@ -50,5 +52,4 @@ class Database extends \medoo {
             'items' => $items,
         );
     }
-
 }

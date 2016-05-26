@@ -2,7 +2,8 @@
 
 namespace Windward\Extend;
 
-class Text extends \Windward\Core\Base {
+class Text extends \Windward\Core\Base
+{
     
     public static function camelCase($str)
     {

@@ -26,7 +26,7 @@ class Request
         $this->server = $_SERVER;
         if ($this->isPost()) {
             $contenttype = strtolower($_SERVER['CONTENT_TYPE']);
-            if (preg_match('/^application\/json/',$contenttype)) {
+            if (preg_match('/^application\/json/', $contenttype)) {
                 $this->post = (array)json_decode(file_get_contents('php://input'), true);
             } else {
                 $this->post = $_POST;
@@ -104,7 +104,8 @@ class Request
         return $this->getServer('REQUEST_METHOD') == 'POST';
     }
     
-    public function isComplete() {
+    public function isComplete()
+    {
         return $this->getPost('complete') && $this->isPost();
     }
 
@@ -154,20 +155,20 @@ class Request
     {
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
             return true;
-        } 
+        }
         return false;
     }
     
-    public function getIp() {
+    public function getIp()
+    {
         $ip = '';
         if (getenv('HTTP_CLIENT_IP')) {
             $ip = getenv('HTTP_CLIENT_IP');
-        } else if (getenv('HTTP_X_FORWARDED_FOR')) {
+        } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
             $ip = getenv('HTTP_X_FORWARDED_FOR');
-        } else if (getenv('REMOTE_ADDR')) {
+        } elseif (getenv('REMOTE_ADDR')) {
             $ip = getenv('REMOTE_ADDR');
         }
         return $ip;
     }
-
 }

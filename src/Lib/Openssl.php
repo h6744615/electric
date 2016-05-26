@@ -72,5 +72,4 @@ class Openssl
         openssl_private_decrypt(base64_decode($data), $decrypt, $privateKey);
         return $decrypt;
     }
-
 }

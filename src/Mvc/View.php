@@ -3,7 +3,8 @@ namespace Windward\Mvc;
 
 use Windward\Core\Container;
 
-Class View Extends \Smarty {
+class View extends \Smarty
+{
     
     private $container;
 

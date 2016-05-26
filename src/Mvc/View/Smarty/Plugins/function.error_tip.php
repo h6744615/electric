@@ -1,6 +1,7 @@
 <?php
 
-function smarty_function_error_tip($params, &$smarty) {
+function smarty_function_error_tip($params, &$smarty)
+{
     $result = '';
 
     $class = isset($params['class']) ? $params['class'] : 'error';

@@ -4,7 +4,8 @@ namespace Windward\Core;
 use Windward\Extend\Text;
 use Windward\Mvc\Controller;
 
-class Router extends Base {
+class Router extends Base
+{
     
     private $controllerSuffix = 'Controller';
     private $actionSuffix = 'Action';
@@ -69,7 +70,7 @@ class Router extends Base {
     }
 
     public function handle($uri)
-    {        
+    {
         $request = Request::build($this->container);
         $this->addRoute(Http::METHOD_ANY, '/:controller/:action/:param_pairs');
         $method = $request->getMethod();
@@ -129,7 +130,7 @@ class Router extends Base {
     }
 
     public function getNotFoundHandler()
-    {   
+    {
         if ($this->notFoundHandler) {
             return $this->notFoundHandler;
         }
@@ -138,7 +139,7 @@ class Router extends Base {
     }
 
     public function setNotFoundHandler(array $handler)
-    {   
+    {
         $controller = $this->container->controller($handler[0]);
         $actionName = $handler[1] . $this->actionSuffix;
         if ($controller && $actionName && is_callable(array($controller, $actionName))) {
@@ -151,7 +152,8 @@ class Router extends Base {
         return $this->activeRoute;
     }
     
-    public function setDefault($c = '',$a = '') {
+    public function setDefault($c = '', $a = '')
+    {
         $c ? $this->defaultController = $c : null;
         $a ? $this->defaultAction = $a : null;
     }

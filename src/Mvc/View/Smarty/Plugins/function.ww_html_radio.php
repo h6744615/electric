@@ -1,6 +1,7 @@
 <?php
 
-function smarty_function_ww_html_radio($params, &$smarty) {
+function smarty_function_ww_html_radio($params, &$smarty)
+{
     $result = '';
 
     $id = $params['id'];

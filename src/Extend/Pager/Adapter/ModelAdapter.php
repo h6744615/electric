@@ -25,8 +25,8 @@ class ModelAdapter implements AdapterInterface
     public function __construct(Model $model, $sql, $countSql = '', array $resultParams = null, array $countParams = null)
     {
         $selectSql = preg_replace(
-            '/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i', 
-            '${1}', 
+            '/([\w]+)\s*(?=limit)limit\s*\d+\s*,\d+$/i',
+            '${1}',
             $sql
         );
         $this->model = $model;
@@ -45,7 +45,7 @@ class ModelAdapter implements AdapterInterface
         if (!$countSql) {
             $countSql = preg_replace(
                 '/select.*?from(.*)/is',
-                'select count(*) as cnt from ${1}', 
+                'select count(*) as cnt from ${1}',
                 $this->sql
             );
         }
@@ -62,5 +62,4 @@ class ModelAdapter implements AdapterInterface
         $length = (int)$length;
         return$this->model->fetchAll($this->sql . ' LIMIT ' . $offset . ', ' . $length, $this->resultParams);
     }
-
 }

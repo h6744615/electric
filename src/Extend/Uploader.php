@@ -4,7 +4,8 @@ namespace Windward\Extend;
 
 use \Intervention\Image\ImageManagerStatic;
 
-class Uploader extends \Windward\Core\Base {
+class Uploader extends \Windward\Core\Base
+{
     
     private $rules;
     private $files;
@@ -26,7 +27,7 @@ class Uploader extends \Windward\Core\Base {
 
     public function setRules(array $rules)
     {
-        $this->rules = $rules;    
+        $this->rules = $rules;
     }
 
     public function handle()
@@ -42,7 +43,7 @@ class Uploader extends \Windward\Core\Base {
                 $files[$key] = $file;
             } else {
                 $count = count($file['name']);
-                for ($i=0; $i < $count; $i++) { 
+                for ($i=0; $i < $count; $i++) {
                     $one = array(
                         'name' => $file['name'][$i],
                         'type' => $file['type'][$i],
@@ -83,7 +84,7 @@ class Uploader extends \Windward\Core\Base {
     
     public function processFile(&$file, $post, $fileKey)
     {
-        $rules = $this->getFileRules($file['config_rule_name']);        
+        $rules = $this->getFileRules($file['config_rule_name']);
         $savePath = $this->getSavePath($rules, $post, $fileKey);
         $valid = $this->validFile($file, $rules);
         if ($valid === false) {
@@ -165,7 +166,7 @@ class Uploader extends \Windward\Core\Base {
             if ($this->logger) {
                 $this->logger->log('api', 'Exception', $e);
             }
-        }   
+        }
     }
 
     public function getDestName($file)
@@ -258,7 +259,7 @@ class Uploader extends \Windward\Core\Base {
             }
             $file = preg_replace('#_(?:([w|h]\d+){1,2}.?(png|jpg|jpeg)?)$#i', '', $this->basePath . $file);
         }
-        $this->generateThubm($file, $thumb, $name, true);   
+        $this->generateThubm($file, $thumb, $name, true);
     }
 
 

@@ -16,7 +16,7 @@ function array_to_hidden($array, $parentKey = '')
         if (is_array($val)) {
             $key = $parentKey ? $parentKey . '[' . $key . ']' : $key;
             $str .= array_to_hidden($val, $key);
-        } else if ($parentKey) {
+        } elseif ($parentKey) {
             $str .= '<input type="hidden" name="' . $parentKey . '[' . $key . ']" value="' . $val . '" />' . "\r\n";
         } else {
             $str .= '<input type="hidden" name="' . $key . '" value="' . $val . '" />' . "\r\n";
@@ -24,5 +24,3 @@ function array_to_hidden($array, $parentKey = '')
     }
     return $str;
 }
-
-?>

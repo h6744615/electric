@@ -2,21 +2,26 @@
 
 namespace \Windward\Extend;
 
-class Session extends \Windward\Core\Base {
+class Session extends \Windward\Core\Base
+{
     
-    function init() {
+    function init()
+    {
         
     }
     
-    function get() {
+    function get()
+    {
         
     }
     
-    function set() {
+    function set()
+    {
         
     }
     
-    function del() {
+    function del()
+    {
         
     }
 }

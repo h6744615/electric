@@ -2,7 +2,8 @@
   
 namespace Windward\Core;
 
-class Route extends Base {
+class Route extends Base
+{
 
     private $pattern;
     private $handler;
@@ -29,9 +30,9 @@ class Route extends Base {
             '/:params',
             '/:param_pairs',
         ), array(
-            $this->idPattern, 
-            $this->idPattern, 
-            '(.*)', 
+            $this->idPattern,
+            $this->idPattern,
+            '(.*)',
             '(.*)'
         ), $pattern);
         $this->pattern = '~^' . $pattern . '$~';
@@ -41,7 +42,7 @@ class Route extends Base {
     public function test($uri)
     {
         $pattern = str_replace('/', '//', $this->pattern);
-        $regexp = preg_replace_callback('#(?:\[([\w]+):([^]]+)\])|(?::(\w+))#', function($m) {
+        $regexp = preg_replace_callback('#(?:\[([\w]+):([^]]+)\])|(?::(\w+))#', function ($m) {
             if ($m[1]) {
                 return '(?P<'. preg_quote($m[1]) . '>' . $m[2] . ')';
             }
@@ -76,7 +77,7 @@ class Route extends Base {
 
     public function getControllerName()
     {
-        return $this->controllerName;   
+        return $this->controllerName;
     }
 
     public function getActionName()

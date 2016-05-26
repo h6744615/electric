@@ -18,7 +18,7 @@ class Aes
             foreach ($data as $k => $v) {
                 $data[$k] = $this->encrypt($v, $key);
             }
-        } else if (strlen($data)) {
+        } elseif (strlen($data)) {
             if (mcrypt_generic_init($this->cipher, $key, $iv) != -1) {
                 $cipherText = mcrypt_generic($this->cipher, $data);
                 mcrypt_generic_deinit($this->cipher);
@@ -37,7 +37,7 @@ class Aes
             foreach ($data as $k => $v) {
                 $data[$k] = $this->decrypt($v, $key);
             }
-        } else if (strlen($data)) {
+        } elseif (strlen($data)) {
             $data = base64_decode($data);
 
             if (mcrypt_generic_init($this->cipher, $key, $iv) != -1) {
@@ -51,5 +51,4 @@ class Aes
 
         return $data;
     }
-
 }

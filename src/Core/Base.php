@@ -6,7 +6,8 @@
 */
 namespace Windward\Core;
 
-class Base {
+class Base
+{
     
     protected $container = null;
     

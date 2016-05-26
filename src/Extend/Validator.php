@@ -114,7 +114,8 @@ class Validator extends \Windward\Core\Base
         return preg_match($regex, $data);
     }
     
-    public function isNotNull($data) {
+    public function isNotNull($data)
+    {
         return $data ? true : false;
     }
 
@@ -189,7 +190,8 @@ class Validator extends \Windward\Core\Base
         return preg_match($regex, $data);
     }
     
-    function isEarlyDate($date, $vars) {
+    function isEarlyDate($date, $vars)
+    {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
         $date = date("Y-m-d", strtotime($date));
@@ -202,11 +204,12 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) < strtotime($compareWithDate);
     }
     
-    function isLaterDate($date, $vars) {
+    function isLaterDate($date, $vars)
+    {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
-        $date = date("Y-m-d",strtotime($date));
-        $compareWithDate = date("Y-m-d",strtotime($compareWithDate));
+        $date = date("Y-m-d", strtotime($date));
+        $compareWithDate = date("Y-m-d", strtotime($compareWithDate));
         
         if ($compareModel == 'ge') {
             return strtotime($date) >= strtotime($compareWithDate);
@@ -215,7 +218,8 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) > strtotime($compareWithDate);
     }
     
-    function isEarlyDatetime($date, $vars) {
+    function isEarlyDatetime($date, $vars)
+    {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
         $date = date("Y-m-d H:i:s", strtotime($date));
@@ -228,11 +232,12 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) < strtotime($compareWithDate);
     }
     
-    function isLaterDatetime($date, $vars) {
+    function isLaterDatetime($date, $vars)
+    {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
-        $date = date("Y-m-d H:i:s",strtotime($date));
-        $compareWithDate = date("Y-m-d H:i:s",strtotime($compareWithDate));
+        $date = date("Y-m-d H:i:s", strtotime($date));
+        $compareWithDate = date("Y-m-d H:i:s", strtotime($compareWithDate));
         
         if ($compareModel == 'ge') {
             return strtotime($date) >= strtotime($compareWithDate);
@@ -245,7 +250,8 @@ class Validator extends \Windward\Core\Base
      * 验证身份证号码
      */
 
-    function isIdNumber($idnumber) {
+    function isIdNumber($idnumber)
+    {
         if (empty($idnumber)) {
             return true;
         }
@@ -272,9 +278,9 @@ class Validator extends \Windward\Core\Base
             $yzm = 12 - $nsum % 11;
             if ($yzm == 10) {
                 $yzm = 'x';
-            } else if ($yzm == 12) {
+            } elseif ($yzm == 12) {
                 $yzm = '1';
-            } else if ($yzm == 11) {
+            } elseif ($yzm == 11) {
                 $yzm = '0';
             }
             if (strtolower($idnumber[17]) == $yzm) {
@@ -286,5 +292,4 @@ class Validator extends \Windward\Core\Base
             return false;
         }
     }
-
 }

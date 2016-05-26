@@ -1,6 +1,7 @@
 <?php
 
-function smarty_function_ww_html_select($params, &$smarty) {
+function smarty_function_ww_html_select($params, &$smarty)
+{
     $result = '';
 
     $group = $params['group'];

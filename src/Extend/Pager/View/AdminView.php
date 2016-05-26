@@ -10,7 +10,7 @@ class AdminView extends DefaultView
 
     public function getHtml($pager, $uri, $query)
     {
-        $routeGenerator = function($page) use ($query, $uri) {
+        $routeGenerator = function ($page) use ($query, $uri) {
             $query['sh']['page'] = $page;
             return $uri . '?' . http_build_query($query);
         };
@@ -23,5 +23,4 @@ class AdminView extends DefaultView
         ];
         return parent::render($pager, $routeGenerator, $options);
     }
-
 }

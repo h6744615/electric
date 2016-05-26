@@ -2,7 +2,8 @@
 
 namespace Windward\Core;
 
-class Http extends \Exception {
+class Http extends \Exception
+{
     
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';

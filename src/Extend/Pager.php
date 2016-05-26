@@ -15,5 +15,4 @@ class Pager extends Pagerfanta
         $this->setNormalizeOutOfRangePages(true);
         parent::setCurrentPage($currentPage);
     }
-
 }

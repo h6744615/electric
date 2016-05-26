@@ -38,7 +38,7 @@ class Controller extends \Windward\Core\Base
             $output.= '</script>';
             $output.= '</head></html>';
             exit($output);
-        } else if (headers_sent()) {
+        } elseif (headers_sent()) {
             $output = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
             $output.= "<meta http-equiv=\"refresh\" content=\"{$delay};URL={$url}\" />";
             $output.= '</head></html>';

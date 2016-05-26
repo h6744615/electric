@@ -1,6 +1,7 @@
 <?php
 
-function smarty_function_ww_html_checkbox($params, &$smarty) {
+function smarty_function_ww_html_checkbox($params, &$smarty)
+{
     $result = '';
 
     $id = $params['id'];

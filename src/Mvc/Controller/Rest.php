@@ -51,7 +51,7 @@ class Rest extends \Windward\Mvc\Controller
                 $className = (new \ReflectionClass($this))->getShortName();
             }
             $iKey = 'controller.' . strtolower($className) . '.' . $key;
-            $error = $this->getLanguage()->error($iKey,$vars);
+            $error = $this->getLanguage()->error($iKey, $vars);
         }
         $result = array(
             'status' => '0',
@@ -151,7 +151,7 @@ class Rest extends \Windward\Mvc\Controller
     /*
      * 记录api访问日志到平台系统
      */
-    public function logApi($platformUrl,$platformId)
+    public function logApi($platformUrl, $platformId)
     {
         if (!$this->request) {
             return true;

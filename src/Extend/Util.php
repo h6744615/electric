@@ -44,7 +44,7 @@ class Util extends \Windward\Core\Base
         foreach ($data as $value) {
             if (is_null($fields)) {
                 $return[$value[$key]] = $value;
-            } else if (is_array($fields)) {
+            } elseif (is_array($fields)) {
                 $return[$value[$key]] = array_intersect_key($fields, $value);
             } else {
                 $return[$value[$key]] = $value[$fields];
@@ -130,7 +130,7 @@ class Util extends \Windward\Core\Base
                     self::stringValues($value);
                 }
             }
-        } else if (is_object($data)) {
+        } elseif (is_object($data)) {
             $array = get_object_vars($data);
             self::stringValues($array);
             foreach ($array as $key => $value) {
@@ -170,24 +170,26 @@ class Util extends \Windward\Core\Base
         return round($diff->days / 30.0) . '月前';
     }
     
-    public static function getThumbUrl($fileUrl,$w = 100, $h = 100) {
+    public static function getThumbUrl($fileUrl, $w = 100, $h = 100)
+    {
         if (!preg_match('/\.(png|jpeg|jpg|gif)$/i', $fileUrl)) {
             return $fileUrl;
         }
         
-        if (preg_match('/\.(png|jpeg|jpg|gif)$/i', $fileUrl,$match) && !preg_match('/\_w[\d]+h[\d]+/i',$fileUrl)) {
+        if (preg_match('/\.(png|jpeg|jpg|gif)$/i', $fileUrl, $match) && !preg_match('/\_w[\d]+h[\d]+/i', $fileUrl)) {
             $ext = $match[1];
             return $fileUrl . "_w{$w}h{$h}.{$ext}";
         }
         return $fileUrl;
     }
     
-    public static function getConvertedArrayValue(&$data, $key = '', $retType = 'int') {
+    public static function getConvertedArrayValue(&$data, $key = '', $retType = 'int')
+    {
         if (!$data || !is_array($data)) {
             return array();
         }
         
-        return array_map(function(&$item) use($key,$retType) {
+        return array_map(function (&$item) use ($key, $retType) {
             $ret = null;
             switch ($retType) {
                 case 'int':
@@ -208,5 +210,4 @@ class Util extends \Windward\Core\Base
             return $ret;
         }, $data);
     }
-
 }

@@ -321,7 +321,7 @@ class Model extends \Windward\Core\Base
         return true;
     }
 
-    public function paginate($sql, $curpage = 1, $limit = 20, $cond = null,$countSql = '')
+    public function paginate($sql, $curpage = 1, $limit = 20, $cond = null, $countSql = '')
     {
         $curpage = (int) $curpage;
         $limit = (int) $limit;
