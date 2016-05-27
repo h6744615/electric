@@ -12,11 +12,13 @@ class Logger extends Base
     private $currentDay;
     private $fileResources = [];
     private $dateFormat = 'Y-m-d';
+    private $uniqueId = "";
 
     public function __construct(Container $container, $baseDir)
     {
         parent::__construct($container);
         $this->baseDir = $baseDir;
+        $this->uniqueId = uniqid();
     }
 
     public function getFileName($type)
@@ -53,7 +55,7 @@ class Logger extends Base
         $type = array_shift($args);
         $fileResource = $this->getFileResource($type);
         // prefix
-        $prefix = '[' . date('Y-m-d H:i:s') . ']' . $this->endOfLine;
+        $prefix = $this->uniqueId . ' [' . date('Y-m-d H:i:s') . ']' . $this->endOfLine;
 
         // log
         flock($fileResource, LOCK_EX);
