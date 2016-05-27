@@ -60,7 +60,7 @@ class Json extends \Windward\Core\Response
      */
     public function output($return = false)
     {
-        $content = json_encode($this->payload, JSON_UNESCAPED_UNICODE);
+        $content = json_encode($this->payload, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         if ($return) {
             return $content;
         }
