@@ -100,6 +100,7 @@ class Router extends Base
         }
         
         $request->setNormalizedUri($controllerName . '/' . $actionName);
+
         $this->container->request = $request;
 
         $controller = $this->container->controller($controllerName);
@@ -132,7 +133,9 @@ class Router extends Base
     public function getNotFoundHandler()
     {
         if ($this->notFoundHandler) {
-            return $this->notFoundHandler;
+            $controller = $this->container->controller($handler[0]);
+            $actionName = $handler[1] . $this->actionSuffix;
+            return array($controller, $actionName);
         }
         $controller = new Controller($this->container);
         return array($controller, 'error404' . $this->actionSuffix);
@@ -140,11 +143,7 @@ class Router extends Base
 
     public function setNotFoundHandler(array $handler)
     {
-        $controller = $this->container->controller($handler[0]);
-        $actionName = $handler[1] . $this->actionSuffix;
-        if ($controller && $actionName && is_callable(array($controller, $actionName))) {
-            $this->notFoundHandler = array($controller, $actionName);
-        }
+        $this->notFoundHandler = $handler;
     }
 
     public function getActiveRoute()
