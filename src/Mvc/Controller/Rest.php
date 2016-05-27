@@ -60,9 +60,11 @@ class Rest extends \Windward\Mvc\Controller
             'data' => new \stdClass,
             'need_relogin' => 0,
         );
-        \Windward\Extend\Util::stringValues($result);
         $response = new JsonResponse($this->container);
-        return $response->setPayload($result);
+        $response->setPayload($result);
+        $this->afterHandle($response);
+        $response->output();
+        die();
     }
 
     public function halt($key, $needLogin = 1, $className = null)
@@ -84,8 +86,8 @@ class Rest extends \Windward\Mvc\Controller
         );
         $response = new JsonResponse($this->container);
         $response->setPayload($result);
-        $response->output();
         $this->afterHandle($response);
+        $response->output();
         die();
     }
 
