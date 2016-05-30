@@ -133,8 +133,8 @@ class Router extends Base
     public function getNotFoundHandler()
     {
         if ($this->notFoundHandler) {
-            $controller = $this->container->controller($handler[0]);
-            $actionName = $handler[1] . $this->actionSuffix;
+            $controller = $this->container->controller($this->notFoundHandler[0]);
+            $actionName = $this->notFoundHandler[1] . $this->actionSuffix;
             return array($controller, $actionName);
         }
         $controller = new Controller($this->container);
