@@ -36,12 +36,13 @@ class Request
 
     public function setCustomData(array $customData)
     {
+        $server = $_SERVER;
         if (isset($customData['header'])) {
             foreach ($customData['header'] as $key => $value) {
-                $_SERVER['HTTP_' . strtoupper($key)] = $value;
+                $server['HTTP_' . str_replace('-', '_', strtoupper($key))] = $value;
             }
         }
-        $this->server = $_SERVER;
+        $this->server = $server;
         $this->post = isset($customData['post']) ? $customData['post'] : null;
         $this->query = isset($customData['get']) ? $customData['get'] : null;
     }
@@ -151,7 +152,7 @@ class Request
         return $this->isHttps() ? 'https' : 'http' . '://' . $this->getServer('HTTP_HOST');
     }
 
-    function isHttps()
+    public function isHttps()
     {
         if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
             return true;
