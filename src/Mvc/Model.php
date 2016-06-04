@@ -123,6 +123,11 @@ class Model extends \Windward\Core\Base
                 $sql .= " and {$key} in (" . $val . ")";
                 continue;
             }
+            if (preg_match('/^\[fis\]/', $key)) {
+                $key = substr($key, 5);
+                $sql .= " and find_in_set('{$val}', {$key})";
+                continue;
+            }
             //other todo
 
             $sql .= " and $key = :cond_{$key}";
