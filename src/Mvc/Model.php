@@ -120,8 +120,8 @@ class Model extends \Windward\Core\Base
                 $val = (array)$val;
                 $inWhere = '';
                 foreach ($val as $k => $v) {
-                    $tmp = 'cond_in_' . $this->hiddenParamIndex;
-                    $inWhere .=  ':' . $tmp . ',';
+                    $tmp = ':cond_in_' . $this->hiddenParamIndex;
+                    $inWhere .=  $tmp . ',';
                     $params[$tmp] = $v;
                     $this->hiddenParamIndex++;
                 }
@@ -136,8 +136,11 @@ class Model extends \Windward\Core\Base
                 $params[$tmp] = $val;
                 continue;
             }
+            if (preg_match('/^func:/', $val)) {
+                $sql .= " and {$key} = " . substr($val, 5);
+                continue;
+            }
             //other todo
-
             $sql .= " and $key = :cond_{$key}";
             $params[":cond_{$key}"] = $val;
         }
@@ -192,45 +195,17 @@ class Model extends \Windward\Core\Base
                 $sql .= "{$key} = " . $val . ",";
                 continue;
             }
-
             $sql .= "{$key} = :{$key},";
             $vals[":{$key}"] = $val;
         }
         $sql = rtrim($sql, ',');
         $sql .= ' where 1 = 1';
-        foreach ($cond as $key => $val) {
-            if (preg_match('/^\[eq\]/', $key)) {
-                $key = substr($key, 4);
-                $sql .= " and {$key} = " . $val;
-                continue;
-            }
-            if (preg_match('/^\[neq\]/', $key)) {
-                $key = substr($key, 5);
-                $sql .= " and {$key} != " . $val;
-                continue;
-            }
-            if (preg_match('/^\[in\]/', $key)) {
-                $key = substr($key, 4);
-                if (is_array($val)) {
-                    $val = implode(',', $val);
-                } else {
-                    $val = (string) $val;
-                }
-                $sql .= " and {$key} in (" . $val . ")";
-                continue;
-            }
-            //other todo
-
-            $sql .= " and $key = :cond_{$key}";
-            $vals[":cond_{$key}"] = $val;
-        }
-        $sql = rtrim($sql, ',');
-        
+        $params = $this->cond($sql, $cond);
         if ($this->logging && $this->logger) {
-            $this->logger->log('db', 'SQL:', $sql, 'PARAM:', $vals);
+            $this->logger->log('db', 'SQL:', $sql, 'PARAM:', $params);
         }
         $stmt = $this->pdo->prepare($sql);
-        if ($stmt->execute($vals) === false) {
+        if ($stmt->execute($params) === false) {
             return false;
         }
 
@@ -309,25 +284,13 @@ class Model extends \Windward\Core\Base
             return false;
         }
 
-        $vals = array();
         $sql = "delete from {$table} where 1 = 1 ";
-
-        foreach ($cond as $key => $val) {
-            if (preg_match('/^func:/', $val)) {
-                $sql .= " and {$key} = " . substr($val, 5);
-                continue;
-            }
-
-            $sql .= " and $key = :cond_{$key}";
-            $vals[":cond_{$key}"] = $val;
-        }
-
-        $sql = rtrim($sql, ',');
+        $params = $this->cond($sql, $cond);
         if ($this->logging && $this->logger) {
-            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $vals);
+            $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
         }
         $stmt = $this->pdo->prepare($sql);
-        if ($stmt->execute($vals) === false) {
+        if ($stmt->execute($params) === false) {
             return false;
         }
         return true;
