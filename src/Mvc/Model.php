@@ -11,6 +11,7 @@ class Model extends \Windward\Core\Base
     protected $pdo;
     protected $transactionLevel = 0;
     protected $logging = true;
+    protected $hiddenParamIndex;
 
     public function setPdo(\PDO $pdo)
     {
@@ -92,6 +93,7 @@ class Model extends \Windward\Core\Base
     {
         $params = array();
         foreach ($cond as $key => $val) {
+            $this->hiddenParamIndex++;
             if (preg_match('/^\[eq\]/', $key)) {
                 $key = substr($key, 4);
                 $sql .= " and {$key} = " . $val;
@@ -115,17 +117,23 @@ class Model extends \Windward\Core\Base
             }
             if (preg_match('/^\[in\]/', $key)) {
                 $key = substr($key, 4);
-                if (is_array($val)) {
-                    $val = implode(',', $val);
-                } else {
-                    $val = (string) $val;
+                $val = (array)$val;
+                $inWhere = '';
+                foreach ($val as $k => $v) {
+                    $tmp = 'cond_in_' . $this->hiddenParamIndex;
+                    $inWhere .=  ':' . $tmp . ',';
+                    $params[$tmp] = $v;
+                    $this->hiddenParamIndex++;
                 }
-                $sql .= " and {$key} in (" . $val . ")";
+                $inWhere = trim($inWhere, ', ');
+                $sql .= " and {$key} in (" . $inWhere . ")";
                 continue;
             }
             if (preg_match('/^\[fis\]/', $key)) {
                 $key = substr($key, 5);
-                $sql .= " and find_in_set('{$val}', {$key})";
+                $tmp = ':cond_fis_' . $this->hiddenParamIndex;
+                $sql .= " and find_in_set({$tmp}, {$key})";
+                $params[$tmp] = $val;
                 continue;
             }
             //other todo
@@ -133,7 +141,6 @@ class Model extends \Windward\Core\Base
             $sql .= " and $key = :cond_{$key}";
             $params[":cond_{$key}"] = $val;
         }
-
         return $params;
     }
 
