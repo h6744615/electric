@@ -201,11 +201,12 @@ class Model extends \Windward\Core\Base
         $sql = rtrim($sql, ',');
         $sql .= ' where 1 = 1';
         $params = $this->cond($sql, $cond);
+        $vals = array_merge($vals, $params);
         if ($this->logging && $this->logger) {
-            $this->logger->log('db', 'SQL:', $sql, 'PARAM:', $params);
+            $this->logger->log('db', 'SQL:', $sql, 'PARAM:', $vals);
         }
         $stmt = $this->pdo->prepare($sql);
-        if ($stmt->execute($params) === false) {
+        if ($stmt->execute($vals) === false) {
             return false;
         }
 
