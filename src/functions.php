@@ -21,7 +21,7 @@ function formatDateDiff($start, $end = null)
         $format[] = "%M月";
     }
     if ($interval->d !== 0) {
-        $format[] = "%D日";
+        $format[] = "%D天";
     }
     if ($interval->h !== 0) {
         $format[] = "%H时";
@@ -58,7 +58,7 @@ function htmlFormatDateDiff($start, $end = null)
         $format[] = "%M<span>月</span>";
     }
     if ($interval->d !== 0) {
-        $format[] = "%D<span>日</span>";
+        $format[] = "%D<span>天</span>";
     }
     if ($interval->h !== 0) {
         $format[] = "%H<span>时</span>";
