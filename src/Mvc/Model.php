@@ -89,6 +89,39 @@ class Model extends \Windward\Core\Base
         return array();
     }
 
+    /**
+     * 添加排序
+     *
+     * @param string $field 排序字段和方式 e.g. 'a.asc, b.desc'
+     * @param string &$sql SQL语句
+     * @param array $config 排序配置 e.g. ['a' => ['field' => 'id', 'type' => 'ASC'], 'b' => ['field' => 'id', 'type' => 'DESC']]
+     *
+     * @return type
+     */
+    public function orderBy(&$sql, $field, array $config)
+    {
+        if (!$field || !$config) {
+            return;
+        }
+        $fields = preg_split('#(,\s*)#iUs', $field);
+        $orderBy = '';
+        foreach ($fields as $one) {
+            $tmp = explode('.', trim($one));
+            $type = $tmp[1];
+            if (!$type && isset($config['type'])) {
+                $type = $config['type'];
+            }
+            if (strtoupper($type) != 'DESC') {
+                $type = 'ASC';
+            }
+            $orderBy .= $config[$tmp[0]]['field'] . ' ' . $type . ',';
+        }
+        $orderBy = trim($orderBy, ',');
+        if ($orderBy) {
+            $sql .= ' ORDER BY ' . $orderBy;
+        }
+    }
+
     public function cond(&$sql, $cond = array())
     {
         $params = array();
