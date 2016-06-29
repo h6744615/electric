@@ -197,6 +197,9 @@ class Model extends \Windward\Core\Base
         if ($orderby) {
             $sql .= " order by {$orderby}";
         }
+        if ($single) {
+            $sql .= ' LIMIT 1';
+        }
         if ($forUpdate) {
             $sql .= " FOR UPDATE";
         }
