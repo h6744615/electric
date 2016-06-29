@@ -188,13 +188,17 @@ class Model extends \Windward\Core\Base
         $fields = '*',
         $cond = array(),
         $single = true,
-        $orderby = null
+        $orderby = null,
+        $forUpdate = false
     ) {
         $sql = "select {$fields} from {$table} where 1 = 1";
 
         $params = $this->cond($sql, $cond);
         if ($orderby) {
             $sql .= " order by {$orderby}";
+        }
+        if ($forUpdate) {
+            $sql .= " FOR UPDATE";
         }
         $stmt = $this->query($sql, $params);
         if ($stmt) {
