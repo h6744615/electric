@@ -57,5 +57,6 @@ class Smarty extends \Windward\Core\Response
     public function setTpl($tpl = '')
     {
         $this->tpl = $tpl;
+        return $this;
     }
 }
