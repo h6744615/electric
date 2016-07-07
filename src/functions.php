@@ -73,3 +73,12 @@ function htmlFormatDateDiff($start, $end = null)
     }
     return $interval->format(join($format));
 }
+
+function HTMLPurifier($html, $config = null)
+{
+    static $purifier = false;
+    if (!$purifier) {
+        $purifier = new HTMLPurifier();
+    }
+    return $purifier->purify($html, $config);
+}
