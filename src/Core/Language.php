@@ -36,9 +36,7 @@ class Language
         }
         $error = Util::getArrayValue($this->error, $key);
         if ($vars) {
-            foreach ($vars as $var) {
-                $error['msg'] = sprintf($error['msg'], $var);
-            }
+            $error['msg'] = vsprintf($error['msg'], $vars);
         }
         return $error;
     }
