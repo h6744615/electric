@@ -73,6 +73,9 @@ class Model extends \Windward\Core\Base
 
     public function fetchOne($sql, $params = null)
     {
+        if (!preg_match('#limit\s+\d+#iUsm', $sql)) {
+            $sql .= " LIMIT 1";
+        }
         $stmt = $this->query($sql, $params);
         if ($stmt) {
             return $stmt->fetch();

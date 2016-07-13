@@ -13,7 +13,7 @@ class Smarty extends \Windward\Core\Response
 {
 
     private $view;
-    private $tpl = '';
+    private $tpl = null;
     
     /**
      * 传入container
@@ -47,11 +47,10 @@ class Smarty extends \Windward\Core\Response
     public function output($return = false)
     {
         if ($return) {
-            return $this->view->fetch();
+            return $this->view->fetch($this->tpl);
         }
         header('Content-Type: text/html;charset=utf-8');
-        $this->view->display($this->tpl ? $this->tpl : null);
-        $this->tpl ? $this->setTpl() : null;
+        $this->view->display($this->tpl);
     }
     
     public function setTpl($tpl = '')
