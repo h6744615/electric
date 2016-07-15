@@ -186,7 +186,7 @@ class Validator extends \Windward\Core\Base
 
     public function isPassword($data)
     {
-        $regex = '/^[0-9a-z]{6,12}$/';
+        $regex = '/^[0-9a-z_@\-\!\#\$\%\^\&\*]{6,16}$/';
         return preg_match($regex, $data);
     }
     
