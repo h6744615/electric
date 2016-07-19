@@ -190,7 +190,7 @@ class Validator extends \Windward\Core\Base
         return preg_match($regex, $data);
     }
     
-    function isEarlyDate($date, $vars)
+    public function isEarlyDate($date, $vars)
     {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
@@ -204,7 +204,7 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) < strtotime($compareWithDate);
     }
     
-    function isLaterDate($date, $vars)
+    public function isLaterDate($date, $vars)
     {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
@@ -218,7 +218,7 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) > strtotime($compareWithDate);
     }
     
-    function isEarlyDatetime($date, $vars)
+    public function isEarlyDatetime($date, $vars)
     {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
@@ -232,7 +232,7 @@ class Validator extends \Windward\Core\Base
         return strtotime($date) < strtotime($compareWithDate);
     }
     
-    function isLaterDatetime($date, $vars)
+    public function isLaterDatetime($date, $vars)
     {
         $compareWithDate = $vars['compareWith'];
         $compareModel = $vars['mode'];
@@ -250,7 +250,7 @@ class Validator extends \Windward\Core\Base
      * 验证身份证号码
      */
 
-    function isIdNumber($idnumber)
+    public function isIdNumber($idnumber)
     {
         if (empty($idnumber)) {
             return true;
@@ -292,4 +292,21 @@ class Validator extends \Windward\Core\Base
             return false;
         }
     }
+    
+    /*
+     * 是否汉字
+     */
+    public function isChineseWord($str, $maxlength = 30)
+    {
+        return preg_match("/^[\x{4e00}-\x{9fa5}]{1,{$maxlength}}$/iu", $str);
+    }
+    
+    /*
+     * 是否汉字、英文字母或数字
+     */
+    public function isNormalWord($str, $maxlength = 30)
+    {
+        return preg_match("/^[\x{4e00}-\x{9fa5}a-z0-9]{1,{$maxlength}}$/iu", $str);
+    }
+
 }
