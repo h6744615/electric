@@ -93,19 +93,19 @@ class Rest extends \Windward\Mvc\Controller
 
     public function success($data = null, $key = null, $className = null, $needLogin = 0)
     {
-        $info = array();
+        $msg = $key;
         if ($key) {
             if (is_null($className)) {
                 $className = (new \ReflectionClass($this))->getShortName();
             }
             $iKey = 'controller.' . strtolower($className) . '.' . $key;
-            $info = $this->getLanguage()->info($iKey);
+            $msg = $this->getLanguage()->info($iKey);
         }
         
         $result = array(
             'status' => '1',
             'code' => 0,
-            'msg' => isset($info['msg']) ? $info['msg'] : $key,
+            'msg' => $msg,
             'data' => $data ? $data : new \stdClass(),
             'need_relogin' => $needLogin,
         );
