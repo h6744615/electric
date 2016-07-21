@@ -73,7 +73,7 @@ class Model extends \Windward\Core\Base
 
     public function fetchOne($sql, $params = null)
     {
-        if (!preg_match('#(limit\s+\d+,?\s+\d*\s*$|for\s+update)#iUsm', $sql)) {
+        if (!preg_match('#(limit\s+\d+,?\s*\d*\s*$|for\s+update)#iUsm', $sql)) {
             $sql .= " LIMIT 1";
         }
         $stmt = $this->query($sql, $params);
