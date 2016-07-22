@@ -29,6 +29,7 @@ class Logger extends Base
 
     public function getFileResource($type)
     {
+        $old = umask(0);
         $today = date($this->dateFormat);
         $file = $this->getFileName($type);
         if (!isset($this->currentDay[$type]) || $today !== $this->currentDay[$type]) {
@@ -46,10 +47,11 @@ class Logger extends Base
             $this->fileResources[$type] = fopen($file, 'a');
             chmod($file, 0777);
         }
+        umask($old);
         return $this->fileResources[$type];
     }
 
-    function log()
+    public function log()
     {
         $args = func_get_args();
         $type = array_shift($args);
