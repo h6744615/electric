@@ -51,7 +51,7 @@ class Logger extends Base
                     throw new \Exception('log error');
                 }
             } catch (\Exception $e) {
-                echo $e;
+                $this->log('exception', (string)$e);
             }
         }
         umask($old);
