@@ -45,7 +45,14 @@ class Logger extends Base
         }
         if (!isset($this->fileResources[$type]) || !is_resource($this->fileResources[$type])) {
             $this->fileResources[$type] = fopen($file, 'a');
-            chmod($file, 0777);
+            try {
+                $res = chmod($file, 0777);
+                if (false === $res) {
+                    throw new \Exception('log error');
+                }
+            } catch (\Exception $e) {
+                echo $e;
+            }
         }
         umask($old);
         return $this->fileResources[$type];
