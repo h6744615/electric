@@ -56,7 +56,7 @@ class Model extends \Windward\Core\Base
         }
     }
 
-    protected function query($sql, $params = null)
+    public function query($sql, $params = null)
     {
         if ($this->logging && $this->logger) {
             $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
