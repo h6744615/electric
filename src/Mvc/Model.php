@@ -62,7 +62,7 @@ class Model extends \Windward\Core\Base
         return $this->affectedRow;
     }
 
-    protected function query($sql, $params = null)
+    public function query($sql, $params = null)
     {
         if ($this->logging && $this->logger) {
             $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $params);
@@ -79,7 +79,7 @@ class Model extends \Windward\Core\Base
 
     public function fetchOne($sql, $params = null)
     {
-        if (!preg_match('#(limit\s+\d+,?\s+\d*\s*$|for\s+update)#iUsm', $sql)) {
+        if (!preg_match('#(limit\s+\d+,?\s*\d*\s*$|for\s+update)#iUsm', $sql)) {
             $sql .= " LIMIT 1";
         }
         $stmt = $this->query($sql, $params);
