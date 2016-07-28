@@ -12,7 +12,8 @@ class Model extends \Windward\Core\Base
     protected $transactionLevel = 0;
     protected $logging = true;
     protected $hiddenParamIndex;
-
+    protected $affectedRow = 0;
+        
     public function setPdo(\PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -54,6 +55,11 @@ class Model extends \Windward\Core\Base
         } else {
             $this->exec("RELEASE SAVEPOINT LEVEL{$this->transactionLevel}");
         }
+    }
+    
+    public function affectedRow()
+    {
+        return $this->affectedRow;
     }
 
     protected function query($sql, $params = null)
@@ -252,7 +258,8 @@ class Model extends \Windward\Core\Base
         if ($stmt->execute($vals) === false) {
             return false;
         }
-
+        
+        $this->affectedRow = $stmt->rowCount();
         return true;
     }
 
@@ -337,6 +344,8 @@ class Model extends \Windward\Core\Base
         if ($stmt->execute($params) === false) {
             return false;
         }
+        
+        $this->affectedRow = $stmt->rowCount();
         return true;
     }
 
