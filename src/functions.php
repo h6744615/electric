@@ -24,10 +24,10 @@ function formatDateDiff($start, $end = null)
         $format[] = "%D天";
     }
     if ($interval->h !== 0) {
-        $format[] = "%H时";
+        $format[] = "%H小时";
     }
     if ($interval->i !== 0) {
-        $format[] = "%I分";
+        $format[] = "%I分钟";
     }
     if ($interval->s !== 0) {
         if (!count($format)) {
@@ -61,10 +61,10 @@ function htmlFormatDateDiff($start, $end = null)
         $format[] = "%D<span>天</span>";
     }
     if ($interval->h !== 0) {
-        $format[] = "%H<span>时</span>";
+        $format[] = "%H<span>小时</span>";
     }
     if ($interval->i !== 0) {
-        $format[] = "%I<span>分</span>";
+        $format[] = "%I<span>分钟</span>";
     }
     if ($interval->s !== 0) {
         if (!count($format)) {
