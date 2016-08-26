@@ -7,10 +7,10 @@ use Windward\Extend\Util;
 class Validator extends \Windward\Core\Base
 {
 
-    var $error = null;
-    var $data = null;
+    private $error = null;
+    private $data = null;
 
-    function getError($field = null)
+    public function getError($field = null)
     {
         if (is_null($field)) {
             return $this->error;
@@ -19,12 +19,12 @@ class Validator extends \Windward\Core\Base
         }
     }
 
-    function setError($field, $error)
+    public function setError($field, $error)
     {
         $this->error[$field] = $error;
     }
 
-    function validate($config, $data, $validAll = true)
+    public function validate($config, $data, $validAll = true)
     {
         $this->data = $data;
 
@@ -64,7 +64,7 @@ class Validator extends \Windward\Core\Base
         return $this->error ? false : true;
     }
 
-    function handle($field, $rules)
+    public function handle($field, $rules)
     {
         if (empty($rules)) {
             return false;
@@ -186,7 +186,7 @@ class Validator extends \Windward\Core\Base
 
     public function isPassword($data)
     {
-        $regex = '/^[0-9a-z_@\-\!\#\$\%\^\&\*]{6,16}$/';
+        $regex = '#^[[:graph:] ]{6,16}$#';
         return preg_match($regex, $data);
     }
     
@@ -308,5 +308,4 @@ class Validator extends \Windward\Core\Base
     {
         return preg_match("/^[\x{4e00}-\x{9fa5}a-z0-9]{1,{$maxlength}}$/iu", $str);
     }
-
 }
