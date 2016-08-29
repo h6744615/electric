@@ -7,8 +7,8 @@ use Windward\Extend\Util;
 class Validator extends \Windward\Core\Base
 {
 
-    private $error = null;
-    private $data = null;
+    public $error = null;
+    public $data = null;
 
     public function getError($field = null)
     {
