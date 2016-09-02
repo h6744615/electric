@@ -19,6 +19,8 @@ class Aes
                 $data[$k] = $this->encrypt($v, $key);
             }
         } elseif (strlen($data)) {
+            //$pad = 16 - (strlen($data) % 16);
+            //$data =  $data . str_repeat(chr($pad), $pad);
             if (mcrypt_generic_init($this->cipher, $key, $iv) != -1) {
                 $cipherText = mcrypt_generic($this->cipher, $data);
                 mcrypt_generic_deinit($this->cipher);
