@@ -136,6 +136,7 @@ class Model extends \Windward\Core\Base
         $params = array();
         foreach ($cond as $key => $val) {
             $this->hiddenParamIndex++;
+            $bKey = '__cond_val_' . $this->hiddenParamIndex;
             if (preg_match('/^\[eq\]/', $key)) {
                 $key = substr($key, 4);
                 $sql .= " and {$key} = " . $val;
@@ -153,8 +154,8 @@ class Model extends \Windward\Core\Base
             }
             if (preg_match('/^\[lk\]/', $key)) {
                 $key = substr($key, 4);
-                $sql .= " and {$key} like :cond_{$key}";
-                $params["cond_{$key}"] = $val;
+                $sql .= " and {$key} like :{$$bKey}";
+                $params[$bKey] = $val;
                 continue;
             }
             if (preg_match('/^\[in\]/', $key)) {
@@ -183,8 +184,8 @@ class Model extends \Windward\Core\Base
                 continue;
             }
             //other todo
-            $sql .= " and $key = :cond_{$key}";
-            $params[":cond_{$key}"] = $val;
+            $sql .= " and $key = :{$bKey}";
+            $params[$bKey] = $val;
         }
         return $params;
     }
@@ -230,6 +231,22 @@ class Model extends \Windward\Core\Base
         return 0;
     }
 
+    public function formatData($data, &$sql, &$vals, $type = 'update')
+    {
+        foreach ($data as $key => $val) {
+            $this->hiddenParamIndex++;
+            if (preg_match('/^\[eq\]/', $key)) {
+                $key = substr($key, 4);
+                $sql .= "{$key} = " . $val . ",";
+                continue;
+            }
+            $bKey = '__' . $type . '_val_' . $this->hiddenParamIndex;
+            $sql .= "{$key} = :{$bKey},";
+            $vals[":{$bKey}"] = $val;
+        }
+        $sql = rtrim($sql, ',');
+    }
+
     public function update($table = '', $data = array(), $cond = array())
     {
         if (!$table || !$data) {
@@ -238,16 +255,9 @@ class Model extends \Windward\Core\Base
 
         $vals = array();
         $sql = "update {$table} set ";
-        foreach ($data as $key => $val) {
-            if (preg_match('/^\[eq\]/', $key)) {
-                $key = substr($key, 4);
-                $sql .= "{$key} = " . $val . ",";
-                continue;
-            }
-            $sql .= "{$key} = :{$key},";
-            $vals[":{$key}"] = $val;
-        }
-        $sql = rtrim($sql, ',');
+        
+        $this->formatData($data, $sql, $vals, 'update');
+
         $sql .= ' where 1 = 1';
         $params = $this->cond($sql, $cond);
         $vals = array_merge($vals, $params);
@@ -274,18 +284,8 @@ class Model extends \Windward\Core\Base
         if ($ignore) {
             $sql = "insert ignore into {$table} set ";
         }
-
-        foreach ($data as $key => $val) {
-            if (preg_match('/^\[eq\]/', $key)) {
-                $key = substr($key, 4);
-                $sql .= "{$key} = " . $val . ",";
-                continue;
-            }
-
-            $sql .= "{$key} = :{$key},";
-            $vals[":{$key}"] = $val;
-        }
-        $sql = rtrim($sql, ',');
+        
+        $this->formatData($data, $sql, $vals, 'insert');
 
         $stmt = $this->pdo->prepare($sql);
         if ($this->logging && $this->logger) {
@@ -307,17 +307,8 @@ class Model extends \Windward\Core\Base
         $vals = array();
         $sql = "replace into {$table} set ";
 
-        foreach ($data as $key => $val) {
-            if (preg_match('/^\[eq\]/', $key)) {
-                $key = substr($key, 4);
-                $sql .= "{$key} = " . $val . ",";
-                continue;
-            }
+        $this->formatData($data, $sql, $vals, 'replace');
 
-            $sql .= "{$key} = :{$key},";
-            $vals[":{$key}"] = $val;
-        }
-        $sql = rtrim($sql, ',');
         if ($this->logging && $this->logger) {
             $this->logger->log('db', 'SQL:', $sql, 'PARAMS:', $vals);
         }
