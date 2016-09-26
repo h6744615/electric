@@ -137,7 +137,7 @@ class Uploader extends \Windward\Core\Base
         }
         $file['dest'] = array(
             'file_name' => $destName,
-            'url' => str_replace('//', '/', $this->request->getSchemaHost() . '/' . $destName),
+            'url' => $this->request->getSchemaHost(). str_replace('//', '/', '/' . $destName),
         );
     }
 
