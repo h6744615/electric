@@ -7,12 +7,17 @@ use \Intervention\Image\ImageManagerStatic;
 class Uploader extends \Windward\Core\Base
 {
     
-    private $rules;
+    private $rules = [];
     private $files;
     private $processOnOneError = true;
     private $hasError = false;
     private $basePath;
     private $presets = array();
+
+    const UPLOAD_TYPE_IMG = 1;
+    const UPLOAD_TYPE_FILE = 2;
+
+    public $uploadType = self::UPLOAD_TYPE_IMG;
 
     public function setBasePath($path)
     {
@@ -34,11 +39,13 @@ class Uploader extends \Windward\Core\Base
     {
         $files = array();
         $post = $this->request->getPost();
+        $fileIndex = 0;
         foreach ($_FILES as $key => $file) {
             if (!is_array($file['name']) && !is_array($file['tmp_name'])) {
                 $file['config_rule_name'] = $key;
                 $file['error'] = '';
                 $file['dest'] = array();
+                $file['index'] = $fileIndex++;
                 $this->processFile($file, $post, $key);
                 $files[$key] = $file;
             } else {
@@ -54,6 +61,7 @@ class Uploader extends \Windward\Core\Base
                         'error' => '',
                         'dest' => array(),
                     );
+                    $one['index'] = $fileIndex++;
                     $this->processFile($one, $post, $key);
                     $files[$key][$i] = $one;
                 }
@@ -90,7 +98,7 @@ class Uploader extends \Windward\Core\Base
         if ($valid === false) {
             $this->hasError = true;
         }
-        if ($this->hasError === true && $this->processOnOneError === false) {
+        if ($this->hasError === true) {
             return false;
         }
         $dir = $this->basePath . $savePath;
@@ -99,7 +107,26 @@ class Uploader extends \Windward\Core\Base
         }
         $destName = str_replace('//', '/', $savePath . '/' . $this->getDestName($file));
         $destFileName = $this->basePath . $destName;
-        move_uploaded_file($file['tmp_name'], $destFileName);
+        if ($this->uploadType == self::UPLOAD_TYPE_IMG) {
+            $exifData = exif_read_data($file['tmp_name']);
+            $img = ImageManagerStatic::make($file['tmp_name']);
+            if (!empty($exifData['Orientation'])) {
+                switch ($exifData['Orientation']) {
+                    case 8:
+                        $img->rotate(90);
+                        break;
+                    case 3:
+                        $img->rotate(180);
+                        break;
+                    case 6:
+                        $img->rotate(-90);
+                        break;
+                }
+            }
+            $img->save($destFileName);
+        } else {
+            move_uploaded_file($file['tmp_name'], $destFileName);
+        }
         if (!file_exists($destFileName)) {
             $file['error'] .= 'move error';
             return false;
@@ -173,9 +200,6 @@ class Uploader extends \Windward\Core\Base
     {
         $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
         $name = uniqid('upload_');
-        $image = ImageManagerStatic::make($file['tmp_name']);
-        $name .= '_w' . $image->width();
-        $name .= 'h' . $image->height();
         return $name . '.' . $ext;
     }
 
@@ -206,6 +230,7 @@ class Uploader extends \Windward\Core\Base
         if (!$rules) {
             return true;
         }
+        $pathinfo = pathinfo($file['name']);
         $errors = array();
         if (isset($rules['maxSize'])) {
             $maxSize = $this->parseSize($rules['maxSize']);
@@ -216,13 +241,50 @@ class Uploader extends \Windward\Core\Base
         if (isset($rules['allowedTypes']) && !in_array($file['type'], $rules['allowedTypes'])) {
             $errors[] = str_replace(':types', join('、', $rules['allowedTypes']), $rules['messageType']);
         }
-        $file['error'] = join("\n", $errors);
+        if (isset($rules['allowedExts']) && !in_array($pathinfo['extension'], $rules['allowedExts'])) {
+            $errors[] = str_replace(':exts', join('、', $rules['allowedExts']), $rules['messageExt']);
+        }
+        if (!empty($errors)) {
+            $file['error'] = join("\n", $errors);
+            return false;
+        }
         return true;
     }
 
     public function getFiles()
     {
-        return $this->files;
+        $success = [];
+        $errors = [];
+        foreach ($this->files as $file) {
+            if (!empty($file['error'])) {
+                $errors[] = [
+                    'name' => $file['name'],
+                    'error' => $file['error'],
+                    'index' => $file['index'],
+                ];
+            } else if (!empty($file['dest'])) {
+                $file['dest']['name'] = $file['name'];
+                $file['dest']['size'] = $file['size'];
+                $file['dest']['type'] = $file['type'];
+                $success[] = $file['dest'];
+            } else {
+                foreach ($file as $one) {
+                    if (empty($one['error'])) {
+                        $one['dest']['name'] = $one['name'];
+                        $one['dest']['size'] = $one['size'];
+                        $one['dest']['type'] = $one['type'];
+                        $success[] = $one['dest'];
+                    } else {
+                        $errors[] = [
+                            'name' => $one['name'],
+                            'error' => $one['error'],
+                            'index' => $one['index'],
+                        ];
+                    }
+                }
+            }
+        }
+        return ['success' => $success, 'errors' => $errors];
     }
 
     public function outImage($file)
