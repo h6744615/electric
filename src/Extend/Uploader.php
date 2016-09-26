@@ -75,6 +75,7 @@ class Uploader extends \Windward\Core\Base
         $date = date('Y/m/d');
         if (isset($post['prefix']) && $post['prefix'] && is_array($post['prefix'])) {
             foreach ($post['prefix'] as $one => $value) {
+                $value = preg_replace('#[^a-z0-9/]#i', '', $value);
                 if (!preg_match('#^([a-zA-z0-1_*]+)$#', $one)) {
                     continue;
                 }
@@ -136,7 +137,7 @@ class Uploader extends \Windward\Core\Base
         }
         $file['dest'] = array(
             'file_name' => $destName,
-            'url' => $this->request->getSchemaHost() . '/' . $destName,
+            'url' => str_replace('//', '/', $this->request->getSchemaHost() . '/' . $destName),
         );
     }
 
