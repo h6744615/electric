@@ -386,4 +386,9 @@ class Model extends \Windward\Core\Base
             'items' => $items,
         );
     }
+
+    public function setLogging($logging)
+    {
+        $this->logging = $logging;
+    }
 }
